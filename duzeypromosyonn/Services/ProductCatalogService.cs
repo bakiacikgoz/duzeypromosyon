@@ -57,13 +57,16 @@ namespace duzeypromosyonn.Services
 
             if (!string.IsNullOrWhiteSpace(query.Q))
             {
-                var needle = Normalize(query.Q);
+                var needle = NormalizeSearchText(query.Q);
+                var needleTokens = SearchTokens(query.Q);
                 products = products.Where(product =>
-                    Contains(product.Name, needle)
-                    || Contains(product.GroupCode, needle)
-                    || Contains(product.CategoryMain, needle)
-                    || Contains(product.CategorySub, needle)
-                    || product.Options.Any(option => Contains(option.StockCode, needle)));
+                    MatchesSearch(product.Name, needle, needleTokens)
+                    || MatchesSearch(product.GroupCode, needle, needleTokens)
+                    || MatchesSearch(product.CategoryMain, needle, needleTokens)
+                    || MatchesSearch(product.CategorySub, needle, needleTokens)
+                    || MatchesSearch(product.SupplierCode, needle, needleTokens)
+                    || MatchesSearch(product.SourceUrl, needle, needleTokens)
+                    || product.Options.Any(option => MatchesSearch(option.StockCode, needle, needleTokens)));
             }
 
             CategoryInfo selectedCategory = null;
@@ -312,9 +315,110 @@ namespace duzeypromosyonn.Services
             return product.CategoryId == categoryId || product.MainCategoryId == categoryId || product.SubCategoryId == categoryId;
         }
 
-        private static bool Contains(string value, string normalizedNeedle)
+        private static bool MatchesSearch(string value, string normalizedNeedle, IList<string> normalizedNeedleTokens)
         {
-            return !string.IsNullOrWhiteSpace(value) && Normalize(value).Contains(normalizedNeedle);
+            if (string.IsNullOrWhiteSpace(value) || string.IsNullOrWhiteSpace(normalizedNeedle))
+            {
+                return false;
+            }
+
+            var normalizedValue = NormalizeSearchText(value);
+            if (normalizedValue.Contains(normalizedNeedle))
+            {
+                return true;
+            }
+
+            if (normalizedNeedleTokens == null || normalizedNeedleTokens.Count == 0)
+            {
+                return false;
+            }
+
+            var valueTokens = SearchTokens(value);
+            return normalizedNeedleTokens.All(needleToken =>
+                valueTokens.Any(valueToken => SearchTokenMatches(valueToken, needleToken)));
+        }
+
+        private static bool SearchTokenMatches(string valueToken, string needleToken)
+        {
+            return string.Equals(valueToken, needleToken, StringComparison.Ordinal)
+                || (needleToken.Length >= 3 && valueToken.StartsWith(needleToken, StringComparison.Ordinal))
+                || (valueToken.Length >= 3 && needleToken.StartsWith(valueToken, StringComparison.Ordinal))
+                || SearchSynonymMatches(valueToken, needleToken);
+        }
+
+        private static bool SearchSynonymMatches(string valueToken, string needleToken)
+        {
+            string[] synonyms;
+            switch (needleToken)
+            {
+                case "bakim":
+                    synonyms = new[] { "manikur" };
+                    break;
+                default:
+                    return false;
+            }
+
+            return synonyms.Any(synonym =>
+                string.Equals(valueToken, synonym, StringComparison.Ordinal)
+                || valueToken.StartsWith(synonym, StringComparison.Ordinal)
+                || synonym.StartsWith(valueToken, StringComparison.Ordinal));
+        }
+
+        private static IList<string> SearchTokens(string text)
+        {
+            return Regex.Split(NormalizeSearchText(text), @"[^a-z0-9]+")
+                .Where(token => token.Length > 1)
+                .Select(StemSearchToken)
+                .Where(token => token.Length > 1)
+                .Distinct(StringComparer.Ordinal)
+                .ToList();
+        }
+
+        private static string StemSearchToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token) || token.Length <= 3)
+            {
+                return token;
+            }
+
+            var suffixes = new[]
+            {
+                "lerden", "lardan", "lerle", "larla", "lerde", "larda", "lere", "lara",
+                "leri", "lari", "ler", "lar", "si", "su", "li", "lu", "i", "u"
+            };
+
+            foreach (var suffix in suffixes)
+            {
+                if (token.EndsWith(suffix, StringComparison.Ordinal) && token.Length - suffix.Length >= 3)
+                {
+                    return token.Substring(0, token.Length - suffix.Length);
+                }
+            }
+
+            return token;
+        }
+
+        private static string NormalizeSearchText(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return string.Empty;
+            }
+
+            var lowered = text.Trim().ToLower(new CultureInfo("tr-TR"))
+                .Replace('\u0131', 'i');
+            var decomposed = lowered.Normalize(NormalizationForm.FormD);
+            var builder = new StringBuilder(decomposed.Length);
+
+            foreach (var character in decomposed)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(character) != UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(character);
+                }
+            }
+
+            return builder.ToString().Normalize(NormalizationForm.FormC);
         }
 
         private static string Normalize(string text)
