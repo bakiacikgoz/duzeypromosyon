@@ -1,0 +1,46 @@
+﻿@model IList<duzeypromosyonn.Models.Canta>
+@{
+    ViewBag.Title = "VIP Çantalar";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="eyebrow">Ürün yönetimi</span>
+        <h1>VIP Çantalar</h1>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">Yeni VIP Çanta</a>
+</div>
+
+<section class="admin-card">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Görsel</th>
+                    <th>Ürün</th>
+                    <th>Fiyat</th>
+                    <th class="text-end">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><img class="admin-thumb" src="@Url.Content(item.ImageUrls.FirstOrDefault() ?? "~/Content/promosyon 2.2/img/kategori-8.jpg")" alt="@item.Baslik" /></td>
+                        <td><strong>@item.Baslik</strong><br /><span>@item.UrunKodu</span></td>
+                        <td>@item.Fiyat.ToString("N2", new System.Globalization.CultureInfo("tr-TR")) TL</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Edit", new { id = item.Id })">Düzenle</a>
+                            @using (Html.BeginForm("Delete", "AdminCanta", new { id = item.Id }, FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Sil</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

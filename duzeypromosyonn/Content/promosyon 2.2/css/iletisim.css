@@ -1,0 +1,84 @@
+@import url('http://fonts.cdnfonts.com/css/mark-pro');
+body{
+    box-sizing: border-box !important;
+    background-image: url("../img/pat.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover !important;
+    background-position:center;
+    font-family: 'Mark Pro', sans-serif !important;
+}
+/*İÇERİK*/
+.iletisim-baslik{
+    font-size: 1.5rem !important;
+    font-weight: 900 !important;
+}
+.iletisim-alt-baslik{
+    font-size: 1.4rem !important; 
+    text-decoration: none;
+    color: black;  
+}
+.iletisim-alt-baslik-a{
+    font-size: 1.4rem !important; 
+    text-decoration: none;
+    color: black;  
+}
+.iletisim-alt-baslik-a:hover{
+    color:#f69220 ;
+}
+.iletisim-sari-h1{
+    font-weight: 800;
+    color: #f69220 ;
+}
+.iletisim-sari-p{
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+.iletisim-form{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: #e1e1e1;
+    background-color: transparent;
+    width: 100%;
+    
+}
+.iletisim-form:focus{
+    outline:none !important;
+    background:rgba(255,255,255, 0.1);
+}
+.iletisim-gonder{
+    background-color: #f69220 ;
+    border-top-left-radius:8px;
+    border:0;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: 900;
+    font-size: 20px;
+    font-weight: 600;
+
+}
+.border-iletisim{
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+    border-bottom: 2px solid #e1e1e1 !important;padding-bottom: 15px;
+}
+.taman:hover{
+    color: #f69220 ;
+    cursor: pointer;
+}
+@media screen and (max-width:280px) {
+    .iletisim-alt-baslik-a{
+        font-size:1em !important
+    }
+    .iletisim-sari-h1{
+        font-weight: 800;
+        color: #f69220 ;
+    }
+    .iletisim-alt-baslik{
+        font-size: 1.1rem !important; 
+        text-decoration: none;
+        color: black;  
+    }
+}

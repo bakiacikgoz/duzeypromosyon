@@ -1,0 +1,16 @@
+[
+  {
+    "SliderId": 1,
+    "ImageUrl": "/Content/SliderImages/slide-1.jpg",
+    "Title": "Kurumsal promosyon ürünleri",
+    "Subtitle": "Güncel katalog ve hızlı teklif",
+    "DisplayOrder": 1
+  },
+  {
+    "SliderId": 2,
+    "ImageUrl": "/Content/SliderImages/slide-2.jpg",
+    "Title": "Markanıza özel çözümler",
+    "Subtitle": "Baskılı fiyatlar için teklif alın",
+    "DisplayOrder": 2
+  }
+]

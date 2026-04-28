@@ -1,0 +1,46 @@
+﻿@model IList<duzeypromosyonn.Models.Slider>
+@{
+    ViewBag.Title = "Slider";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="eyebrow">Vitrin</span>
+        <h1>Slider Yönetimi</h1>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">Yeni slider</a>
+</div>
+
+<section class="admin-card">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Görsel</th>
+                    <th>Başlık</th>
+                    <th>Sıra</th>
+                    <th class="text-end">İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><img class="admin-thumb" src="@Url.Content(item.ImageUrl)" alt="@item.Title" /></td>
+                        <td><strong>@item.Title</strong><br /><span>@item.Subtitle</span></td>
+                        <td>@item.DisplayOrder</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Edit", new { id = item.SliderId })">Düzenle</a>
+                            @using (Html.BeginForm("Delete", "Slider", new { id = item.SliderId }, FormMethod.Post, new { @class = "d-inline" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Sil</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

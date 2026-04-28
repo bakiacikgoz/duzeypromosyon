@@ -1,0 +1,129 @@
+﻿@model duzeypromosyonn.Models.ContactViewModel
+@{
+    ViewBag.Title = "İletişim";
+}
+
+<section class="contact-shell contact-hero-shell">
+    <div class="contact-hero-panel">
+        <div class="contact-hero-inner">
+            <div class="contact-eyebrow">
+                <span>İLETİŞİM</span>
+            </div>
+            <h1 class="contact-hero-title">Teklif ve ürün danışmanlığı için bizimle <strong>iletişime geçin.</strong></h1>
+            <p class="contact-hero-copy">Kurumsal promosyon ihtiyaçlarınız için ürün, baskı ve teslimat seçenekleri hakkında size en uygun çözümü sunalım.</p>
+            <span class="contact-title-rule" aria-hidden="true"></span>
+
+            <div class="contact-info-grid" aria-label="İletişim bilgileri">
+                <a class="contact-info-card" href="tel:+902124179292">
+                    <span class="contact-info-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M6.6 2.8 10 6.2 8 8.7c1.2 2.5 3.1 4.4 5.6 5.6l2.5-2 3.4 3.4-1.2 3.1c-.4 1-1.4 1.6-2.5 1.4C9.7 19.2 4.7 14.3 3.7 8.1 3.5 7 4.1 6 5.1 5.6l1.5-2.8Z" />
+                        </svg>
+                    </span>
+                    <span>
+                        <strong>Telefon</strong>
+                        <small>+90 212 417 92 92</small>
+                        <em>Hemen arayın</em>
+                    </span>
+                </a>
+                <a class="contact-info-card" href="mailto:info@duzeypromosyon.com">
+                    <span class="contact-info-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M3 5h18v14H3V5Zm2.1 2 6.9 5.2L18.9 7H5.1Zm13.9 10V9.4l-7 5.2-7-5.2V17h14Z" />
+                        </svg>
+                    </span>
+                    <span>
+                        <strong>E-posta</strong>
+                        <small>info@duzeypromosyon.com</small>
+                        <em>Bize yazın</em>
+                    </span>
+                </a>
+        <a class="contact-info-card" href="https://wa.me/905360752232" target="_blank" rel="noopener">
+                    <span class="contact-info-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 2.8A9.2 9.2 0 0 0 4.1 16.7L3 21l4.4-1.1A9.2 9.2 0 1 0 12 2.8Zm0 2a7.2 7.2 0 0 1 0 14.4c-1.2 0-2.4-.3-3.4-.9l-.4-.2-2.4.6.6-2.3-.2-.4A7.2 7.2 0 0 1 12 4.8Zm-3.1 3.8c-.2 0-.5.1-.7.4-.2.3-.8.8-.8 2s.9 2.4 1 2.5c.1.2 1.8 2.8 4.4 3.8 2.2.9 2.6.7 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.4l-1.6-.8c-.2-.1-.4-.1-.6.1l-.7.9c-.1.2-.3.2-.6.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.5c.1-.1.2-.3.3-.5.1-.2 0-.4 0-.5l-.7-1.6c-.2-.4-.4-.4-.6-.4h-.5Z" />
+                        </svg>
+                    </span>
+                    <span>
+                        <strong>WhatsApp</strong>
+                        <small>Hemen yazın</small>
+                        <em>Hızlı destek alın</em>
+                    </span>
+                </a>
+                <div class="contact-info-card">
+                    <span class="contact-info-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 5v4.5l3 1.8-1 1.7-4-2.4V7h2Z" />
+                        </svg>
+                    </span>
+                    <span>
+                        <strong>Çalışma Saatleri</strong>
+                        <small>Pazartesi - Cuma</small>
+                        <em>09:00 - 18:00</em>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-form-panel">
+        @using (Html.BeginForm("iletisim", "DPromosyon", FormMethod.Post, new { @class = "contact-form-card" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="contact-form-note">
+                <span aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M21 3 3 10.8l6.8 2.4L18 7l-6.2 8.2L14.2 22 21 3Z" />
+                    </svg>
+                </span>
+                <div>
+                    <strong>Size en kısa sürede dönüş yapalım.</strong>
+                    <p>Talebinizi aldığımızda ekibimiz sizinle en kısa sürede iletişime geçecektir.</p>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger contact-validation-summary" })
+
+            <div class="contact-form-grid">
+                <div class="contact-field">
+                    @Html.LabelFor(x => x.Name, "Ad Soyad", new { @class = "form-label" })
+                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control", placeholder = "Adınız Soyadınız", autocomplete = "name" })
+                    @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="contact-field">
+                    @Html.LabelFor(x => x.Phone, "Telefon", new { @class = "form-label" })
+                    @Html.TextBoxFor(x => x.Phone, new { @class = "form-control", placeholder = "05XX XXX XX XX", autocomplete = "tel", type = "tel" })
+                    @Html.ValidationMessageFor(x => x.Phone, "", new { @class = "text-danger" })
+                </div>
+                <div class="contact-field contact-field-full">
+                    @Html.LabelFor(x => x.Email, "E-posta", new { @class = "form-label" })
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control", placeholder = "ornek@eposta.com", autocomplete = "email", type = "email" })
+                    @Html.ValidationMessageFor(x => x.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="contact-field contact-field-full">
+                    @Html.LabelFor(x => x.Message, "Mesaj", new { @class = "form-label" })
+                    @Html.TextAreaFor(x => x.Message, 5, 30, new { @class = "form-control", placeholder = "Nasıl yardımcı olabiliriz? İhtiyacınızı detaylıca yazabilirsiniz..." })
+                    @Html.ValidationMessageFor(x => x.Message, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <button class="btn btn-primary contact-submit-btn" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M21 3 3 10.8l6.8 2.4L18 7l-6.2 8.2L14.2 22 21 3Z" />
+                </svg>
+                Mesaj gönder
+            </button>
+
+            <p class="contact-privacy-note">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M7 10V8a5 5 0 1 1 10 0v2h1.2c.4 0 .8.4.8.8v9.4c0 .4-.4.8-.8.8H5.8a.8.8 0 0 1-.8-.8v-9.4c0-.4.4-.8.8-.8H7Zm2 0h6V8a3 3 0 1 0-6 0v2Zm3 4a1.3 1.3 0 0 0-.8 2.3V18h1.6v-1.7A1.3 1.3 0 0 0 12 14Z" />
+                </svg>
+                Bilgileriniz gizli tutulur ve üçüncü kişilerle paylaşılmaz.
+            </p>
+        }
+    </div>
+</section>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

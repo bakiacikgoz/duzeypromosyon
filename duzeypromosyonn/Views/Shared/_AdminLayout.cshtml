@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Düzey Promosyon Yönetim</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body class="admin-body">
+    <nav class="navbar navbar-expand-lg navbar-dark admin-nav">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="@Url.Action("Index", "Admin")">Düzey Yönetim</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav" aria-controls="adminNav" aria-expanded="false" aria-label="Menüyü aç">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="adminNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Admin")">Panel</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "AdminCanta")">VIP Çantalar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Slider")">Slider</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "DPromosyon")" target="_blank">Siteyi Aç</a></li>
+                </ul>
+                <a class="btn btn-outline-light btn-sm" href="@Url.Action("LogOut", "Login")">Çıkış</a>
+            </div>
+        </div>
+    </nav>
+    <main class="admin-main">
+        <div class="container-fluid">
+            @Html.Partial("_Alerts")
+            @RenderBody()
+        </div>
+    </main>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,107 @@
+﻿@using duzeypromosyonn.Services
+@model duzeypromosyonn.Models.HomeViewModel
+@{
+    ViewBag.Title = "Kurumsal Promosyon Ürünleri";
+    var showcaseCategories = new[]
+    {
+        new { Title = "Teknolojik Ürünler", RouteName = "Teknolojik Ürünler", Id = 63, Image = "kategori-1.jpg" },
+        new { Title = "Defterler, Ajandalar", RouteName = "Defterler", Id = 15, Image = "kategori-2.jpg" },
+        new { Title = "Kırtasiye Ürünleri", RouteName = "Kırtasiye Ürünleri", Id = 96, Image = "kategori-3.jpg" },
+        new { Title = "Hesap Makineleri", RouteName = "Hesap Makineleri", Id = 28, Image = "kategori-4.jpg" },
+        new { Title = "Duvar Saatleri", RouteName = "Duvar Saatleri", Id = 11, Image = "kategori-5.jpg" },
+        new { Title = "Anahtarlık Rozetler", RouteName = "Anahtarlık ve Rozetler", Id = 18, Image = "kategori-6.jpg" },
+        new { Title = "Plastik Ürünler", RouteName = "Plastik Ürünler", Id = 69, Image = "kategori-7.jpg" },
+        new { Title = "Deri Ürünler", RouteName = "Deri Ürünler", Id = 85, Image = "kategori-8.jpg" },
+        new { Title = "Matbaa Ürünleri", RouteName = "Matbaa Ürünleri", Id = 17, Image = "kategori-9.jpg" }
+    };
+
+}
+
+<section class="home-slider" aria-label="Düzey Promosyon slider">
+    <div id="homeSlider" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @if (Model.Sliders != null && Model.Sliders.Any())
+            {
+                var slideIndex = 0;
+                foreach (var slider in Model.Sliders)
+                {
+                    var sliderImageUrl = Url.Content(slider.ImageUrl);
+                    var isWhatsappSlider = (slider.ImageUrl ?? string.Empty).IndexOf("whatsapp", StringComparison.OrdinalIgnoreCase) >= 0
+                        || (slider.Title ?? string.Empty).IndexOf("whatsapp", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    <div class="carousel-item @(slideIndex == 0 ? "active" : "")">
+                        @if (isWhatsappSlider)
+                        {
+                <a class="home-slider-link" href="https://wa.me/905360752232?text=Merhaba%2C%20promosyon%20urunleri%20hakkinda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener" aria-label="WhatsApp ile iletişime geç">
+                                <img src="@sliderImageUrl" alt="@(slider.Title ?? "WhatsApp ile iletişime geç")" />
+                            </a>
+                        }
+                        else
+                        {
+                            <img src="@sliderImageUrl" alt="@(slider.Title ?? "Düzey Promosyon slider")" />
+                        }
+                    </div>
+                    slideIndex++;
+                }
+            }
+            else
+            {
+                <div class="carousel-item active">
+                    <img src="@Url.Content("~/Content/SliderImages/slide-1.jpg")" alt="Düzey Promosyon slider" />
+                </div>
+            }
+        </div>
+        @if (Model.Sliders != null && Model.Sliders.Count > 1)
+        {
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeSlider" data-bs-slide="prev" aria-label="Önceki slider">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeSlider" data-bs-slide="next" aria-label="Sonraki slider">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            </button>
+        }
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container">
+        <div class="section-heading category-showcase-heading">
+            <div>
+                <span class="eyebrow">Kategoriler</span>
+                <h2>En çok kullanılan ürün grupları</h2>
+            </div>
+            <a class="category-showcase-all" href="@Url.Action("Urunler", "DPromosyon")">Tümünü görüntüle <span aria-hidden="true">›</span></a>
+        </div>
+        <div class="category-showcase-grid">
+            @foreach (var item in showcaseCategories)
+            {
+                <a class="category-showcase-tile" href="@Url.RouteUrl("Category", new { title = ProductCatalogService.Slugify(item.RouteName), id = item.Id })">
+                    <span class="category-showcase-copy">
+                        <span>@item.Title</span>
+                        <strong>Tümünü Görüntüle &gt;</strong>
+                    </span>
+                    <img src="@Url.Content("~/Content/promosyon 2.2/img/" + item.Image)" alt="@item.Title" />
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-block products-band">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Öne çıkanlar</span>
+                <h2>Stoklu ürünlerden hızlı seçim</h2>
+            </div>
+            <a href="@Url.Action("Urunler", "DPromosyon", new { inStock = true })">Stoklu ürünleri gör</a>
+        </div>
+        <div class="product-grid">
+            @for (var productIndex = 0; productIndex < Model.FeaturedProducts.Count; productIndex++)
+            {
+                var product = Model.FeaturedProducts[productIndex];
+                @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 8 } })
+            }
+        </div>
+    </div>
+</section>

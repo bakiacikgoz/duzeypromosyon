@@ -1,0 +1,28 @@
+# Build outputs
+.vs/
+**/bin/
+**/obj/
+packages/
+
+# Visual Studio user files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local publish/output artifacts
+*.Publish.xml
+*.pubxml.user
+
+# Local secrets and machine-specific config backups
+duzeypromosyonn/Web.config.local.secret
+duzeypromosyonn/App_Data/*.local.config
+duzeypromosyonn/App_Data/*Secret*.config
+
+# Logs and temp files
+*.log
+*.tmp
+*.cache
+
+# Local compiled helpers
+*.exe

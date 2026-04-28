@@ -1,0 +1,32 @@
+﻿@model duzeypromosyonn.Models.Slider
+<section class="admin-card admin-form-card">
+    <h1>@ViewBag.Title</h1>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(x => x.SliderId)
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="mb-3">
+            @Html.LabelFor(x => x.Title, "Başlık", new { @class = "form-label" })
+            @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(x => x.Subtitle, "Alt başlık", new { @class = "form-label" })
+            @Html.TextBoxFor(x => x.Subtitle, new { @class = "form-control" })
+        </div>
+        <div class="mb-3">
+            @Html.LabelFor(x => x.DisplayOrder, "Sıra", new { @class = "form-label" })
+            @Html.TextBoxFor(x => x.DisplayOrder, new { @class = "form-control", type = "number" })
+        </div>
+        if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <div class="mb-3"><img class="admin-preview" src="@Url.Content(Model.ImageUrl)" alt="@Model.Title" /></div>
+        }
+        <div class="mb-3">
+            <label class="form-label" for="imageFile">Görsel</label>
+            <input class="form-control" type="file" id="imageFile" name="imageFile" accept="image/*" />
+        </div>
+        <button class="btn btn-primary" type="submit">Kaydet</button>
+        <a class="btn btn-link" href="@Url.Action("Index")">İptal</a>
+    }
+</section>

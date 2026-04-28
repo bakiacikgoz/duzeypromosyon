@@ -1,0 +1,288 @@
+﻿@using duzeypromosyonn.Services
+@model duzeypromosyonn.Models.ProductDetailViewModel
+@{
+    var product = Model.Product;
+    ViewBag.Title = product.Name;
+
+    Func<string, string> colorValue = color =>
+    {
+        var value = (color ?? string.Empty).ToLowerInvariant();
+        if (value.Contains("beyaz")) return "#ffffff";
+        if (value.Contains("siyah")) return "#111827";
+        if (value.Contains("kırmızı") || value.Contains("kirmizi")) return "#dc2626";
+        if (value.Contains("mavi")) return "#2563eb";
+        if (value.Contains("lacivert")) return "#172554";
+        if (value.Contains("yeşil") || value.Contains("yesil")) return "#16a34a";
+        if (value.Contains("sarı") || value.Contains("sari")) return "#facc15";
+        if (value.Contains("turuncu")) return "#f97316";
+        if (value.Contains("mor")) return "#7c3aed";
+        if (value.Contains("pembe")) return "#ec4899";
+        if (value.Contains("gri") || value.Contains("füme") || value.Contains("fume")) return "#9ca3af";
+        if (value.Contains("gümüş") || value.Contains("gumus") || value.Contains("silver")) return "#d1d5db";
+        if (value.Contains("altın") || value.Contains("altin") || value.Contains("gold")) return "#d4a017";
+        if (value.Contains("kahve") || value.Contains("taba")) return "#92400e";
+        if (value.Contains("şeffaf") || value.Contains("seffaf") || value.Contains("transparan")) return "rgba(255,255,255,0.55)";
+        return "#cbd5e1";
+    };
+
+    var relatedCategoryId = product.CategoryId > 0 ? product.CategoryId : product.MainCategoryId;
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+    Func<decimal, string> formatPrice = price => price == decimal.Truncate(price)
+        ? price.ToString("N0", trCulture)
+        : price.ToString("N2", trCulture);
+    var visibleOptionCount = 6;
+    var hiddenOptionCount = Math.Max(0, product.Options.Count - visibleOptionCount);
+}
+
+<section class="detail-shell">
+    <div class="container">
+        <nav class="detail-breadcrumb" aria-label="Sayfa konumu">
+            <a href="@Url.Action("Index", "DPromosyon")">Ana Sayfa</a>
+            @if (!string.IsNullOrWhiteSpace(product.CategoryMain))
+            {
+                <span>/</span>
+                <a href="@Url.RouteUrl("Category", new { title = ProductCatalogService.Slugify(product.CategoryMain), id = relatedCategoryId })">@product.CategoryMain</a>
+            }
+            @if (!string.IsNullOrWhiteSpace(product.CategorySub))
+            {
+                <span>/</span>
+                <a href="@Url.Action("Urunler", "DPromosyon", new { kategoriId = relatedCategoryId, altKategori = product.CategorySub })">@product.CategorySub</a>
+            }
+            <span>/</span>
+            <strong>@product.Name</strong>
+        </nav>
+        <div class="row g-5">
+            <div class="col-lg-6 detail-media-column">
+                <div class="detail-image">
+                    <button class="detail-image-zoom-trigger" type="button" data-bs-toggle="modal" data-bs-target="#productImageModal" aria-label="@product.Name görselini büyüt">
+                        <img src="@product.ImageUrl" alt="@product.Name" />
+                        <span class="detail-image-zoom-badge">
+                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                <path d="M10.5 4a6.5 6.5 0 0 1 5.1 10.5l4.4 4.4-1.4 1.4-4.4-4.4A6.5 6.5 0 1 1 10.5 4Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Zm-1 2.2h2v2h2v2h-2v2h-2v-2h-2v-2h2v-2Z" />
+                            </svg>
+                            Görseli büyüt
+                        </span>
+                    </button>
+                </div>
+                <div class="detail-image-options">
+                    <div class="detail-section-inline">
+                        <h2>Renk / stok seçenekleri</h2>
+                        @if (product.Options.Any())
+                        {
+                            <div class="option-list">
+                                @for (var index = 0; index < product.Options.Count; index++)
+                                {
+                                    var option = product.Options[index];
+                                    <div class="option-row @(index >= visibleOptionCount ? "is-hidden" : "")" style="--option-accent:@colorValue(option.Color)">
+                                        <div class="option-color">
+                                            <span class="color-swatch" style="background-color:@colorValue(option.Color)"></span>
+                                            <div>
+                                                <span>Renk</span>
+                                                <strong>@option.Color</strong>
+                                            </div>
+                                        </div>
+                                        <div class="option-stock">
+                                            <span>Stok</span>
+                                            <strong class="stock-badge @(option.StockQuantity > 0 ? "is-available" : "is-empty")">
+                                                @(option.StockQuantity > 0 ? option.StockQuantity.ToString("N0") + " adet" : "Tükendi")
+                                            </strong>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            if (hiddenOptionCount > 0)
+                            {
+                                <button class="option-toggle" type="button" data-expanded="false" data-more="@hiddenOptionCount renk seçeneğini daha göster" data-less="Seçenekleri daralt">
+                                    @hiddenOptionCount renk seçeneğini daha göster
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <p class="muted-copy">Bu ürün için varyant bilgisi bulunmuyor.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 detail-info-column">
+                <div class="detail-info-panel">
+                    <span class="eyebrow">@product.CategoryMain</span>
+                    <h1>@product.Name</h1>
+                    <div class="detail-price">
+                        <span class="detail-price-amount">@formatPrice(product.Price) @product.Currency</span>
+                        <span class="detail-price-tax">+ KDV</span>
+                    </div>
+
+                    <div class="detail-code-row">
+                        <div>
+                            <span>Ürün kodu</span>
+                            <strong id="productCode">@product.GroupCode</strong>
+                        </div>
+                        <button class="copy-code-btn" type="button" data-copy="@product.GroupCode" aria-label="Ürün kodunu kopyala">
+                            Kopyala
+                        </button>
+                    </div>
+
+                    <dl class="detail-facts compact">
+                        <div class="detail-fact-card">
+                            <span class="detail-fact-icon icon-category" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="M20.6 11.1 12.9 18.8a2.8 2.8 0 0 1-4 0l-4.7-4.7a2.8 2.8 0 0 1 0-4l7.7-7.7H20v8.7ZM16.8 7.8a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8Z" /></svg>
+                            </span>
+                            <div class="detail-fact-copy">
+                                <dt>Alt kategori</dt>
+                                <dd>@(string.IsNullOrWhiteSpace(product.CategorySub) ? product.CategoryMain : product.CategorySub)</dd>
+                            </div>
+                        </div>
+                        <div class="detail-fact-card">
+                            <span class="detail-fact-icon icon-tax" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="M7 2h7l5 5v15H7V2Zm6 1.9V8h4.1L13 3.9ZM9.4 12.2h7.2v1.6H9.4v-1.6Zm0 3.2h7.2V17H9.4v-1.6Z" /></svg>
+                            </span>
+                            <div class="detail-fact-copy">
+                                <dt>KDV</dt>
+                                <dd>%@product.VatRate</dd>
+                            </div>
+                        </div>
+                        <div class="detail-fact-card stock-highlight">
+                            <span class="detail-fact-icon icon-stock" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="m12 2 8 4.5v9L12 20l-8-4.5v-9L12 2Zm0 2.3L7.1 7 12 9.7 16.9 7 12 4.3Zm-6 4.4v5.6l5 2.8v-5.6L6 8.7Zm7 8.4 5-2.8V8.7l-5 2.8v5.6Z" /></svg>
+                            </span>
+                            <div class="detail-fact-copy">
+                                <dt>Toplam stok</dt>
+                                <dd>@(product.TotalStock > 0 ? product.TotalStock.ToString("N0") + " adet" : "Stok sorunuz")</dd>
+                            </div>
+                        </div>
+                    </dl>
+
+                    <div class="detail-section-inline description-inline">
+                        <h2>Ürün açıklaması</h2>
+                        <div class="product-description">@Html.Raw(product.DescriptionHtml)</div>
+                    </div>
+
+                    <div class="detail-actions">
+                        <a class="btn btn-primary btn-lg" href="https://wa.me/905360752232?text=@HttpUtility.UrlEncode(product.Name + " - " + product.GroupCode + " için teklif almak istiyorum.")" target="_blank" rel="noopener">Teklif al</a>
+                        <a class="btn btn-outline-primary btn-lg" href="tel:+902124179292">Hemen ara</a>
+                    </div>
+                    <p class="detail-note">Fiyatlar baskısızdır. Baskı, adet ve termin bilgisi için teklif alın.</p>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+        {
+            <section class="related-products">
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">Benzer ürünler</span>
+                        <h2>Bu kategorideki diğer seçenekler</h2>
+                    </div>
+                    <a href="@Url.RouteUrl("Category", new { title = ProductCatalogService.Slugify(product.CategoryMain), id = relatedCategoryId })">Kategoriye git</a>
+                </div>
+                <div class="related-product-row">
+                    @foreach (var related in Model.RelatedProducts)
+                    {
+                        @Html.Partial("_ProductCard", related)
+                    }
+                </div>
+            </section>
+        }
+    </div>
+</section>
+
+<div class="modal fade product-image-modal" id="productImageModal" tabindex="-1" aria-labelledby="productImageModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="product-image-modal-title" id="productImageModalTitle">@product.Name</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Görseli kapat"></button>
+            </div>
+            <div class="modal-body">
+                <img src="@product.ImageUrl" alt="@product.Name" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function () {
+            var buttons = document.querySelectorAll(".copy-code-btn");
+            buttons.forEach(function (button) {
+                button.addEventListener("click", function () {
+                    var value = button.getAttribute("data-copy") || "";
+                    var done = function () {
+                        button.textContent = "Kopyalandı";
+                        window.setTimeout(function () { button.textContent = "Kopyala"; }, 1600);
+                    };
+
+                    var fallback = function () {
+                        var input = document.createElement("input");
+                        input.value = value;
+                        document.body.appendChild(input);
+                        input.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(input);
+                        done();
+                    };
+
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(value).then(done).catch(fallback);
+                        return;
+                    }
+
+                    fallback();
+                });
+            });
+
+            var optionToggles = document.querySelectorAll(".option-toggle");
+            optionToggles.forEach(function (toggle) {
+                toggle.addEventListener("click", function () {
+                    var panel = toggle.closest(".detail-section-inline");
+                    if (!panel) {
+                        return;
+                    }
+
+                    var hiddenRows = panel.querySelectorAll(".option-row.is-hidden");
+                    var expanded = toggle.getAttribute("data-expanded") === "true";
+                    hiddenRows.forEach(function (row) {
+                        row.classList.toggle("is-visible", !expanded);
+                    });
+
+                    toggle.setAttribute("data-expanded", expanded ? "false" : "true");
+                    toggle.textContent = expanded ? toggle.getAttribute("data-more") : toggle.getAttribute("data-less");
+                });
+            });
+
+            var relatedRows = document.querySelectorAll(".related-product-row");
+            var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (!reduceMotion) {
+                relatedRows.forEach(function (row) {
+                    if (row.scrollWidth <= row.clientWidth) {
+                        return;
+                    }
+
+                    var direction = 1;
+                    var paused = false;
+                    var maxScroll = function () { return row.scrollWidth - row.clientWidth; };
+                    row.addEventListener("mouseenter", function () { paused = true; });
+                    row.addEventListener("mouseleave", function () { paused = false; });
+                    row.addEventListener("focusin", function () { paused = true; });
+                    row.addEventListener("focusout", function () { paused = false; });
+
+                    window.setInterval(function () {
+                        if (paused || row.scrollWidth <= row.clientWidth) {
+                            return;
+                        }
+
+                        if (row.scrollLeft >= maxScroll() - 1) {
+                            direction = -1;
+                        } else if (row.scrollLeft <= 0) {
+                            direction = 1;
+                        }
+
+                        row.scrollLeft += direction;
+                    }, 32);
+                });
+            }
+        })();
+    </script>
+}

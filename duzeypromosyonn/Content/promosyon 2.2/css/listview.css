@@ -1,0 +1,71 @@
+.list-h1 {
+    border-bottom: 1px solid #f69220;
+    width: 10%;
+}
+
+.form-check-input:checked[type=checkbox] {
+    background-image: url('none') !important;
+    background-color: #f69220 !important;
+    border-color: #f69220 !important;
+}
+
+.select {
+    padding: 3px;
+    width: 100%;
+}
+
+.select option {
+    font-size: 0.8rem !important;
+    padding: 5px;
+    border-bottom: 0.1px solid rgb(175, 173, 173);
+}
+
+.card-detay {
+    text-decoration: none !important;
+    background-color: #f69220;
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.card-detay:hover {
+    color: white;
+}
+
+.mobil-kategori {
+    display: none !important;
+}
+
+@media screen and (max-width:991px) {
+    .kategori {
+        display: none !important;
+    }
+
+    .mobil-kategori {
+        display: block !important;
+    }
+
+
+}
+
+@media screen and (max-width:768px) {
+    .card-title {
+        font-size: 0.8em !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    .card-text {
+        font-size: 0.8em !important;
+        display: flex;
+        justify-content: center;
+    }
+
+    .card-detay {
+        padding: 5px;
+        color: white;
+        display: flex;
+        justify-content: center;
+    }
+
+}

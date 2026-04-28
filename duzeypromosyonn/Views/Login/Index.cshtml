@@ -1,0 +1,40 @@
+﻿@model duzeypromosyonn.Models.AdminLoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Düzey Promosyon Yönetim Girişi</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body class="login-body">
+    <main class="login-shell">
+        <section class="login-card">
+            <img src="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" alt="Düzey Promosyon" />
+            <h1>Yönetim girişi</h1>
+            <p>Slider, VIP çanta ve XML katalog güncelleme ekranlarına erişin.</p>
+            @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="mb-3">
+                    @Html.LabelFor(x => x.UserName, "Kullanıcı adı", new { @class = "form-label" })
+                    @Html.TextBoxFor(x => x.UserName, new { @class = "form-control", autofocus = "autofocus" })
+                    @Html.ValidationMessageFor(x => x.UserName, "", new { @class = "text-danger" })
+                </div>
+                <div class="mb-3">
+                    @Html.LabelFor(x => x.Password, "Şifre", new { @class = "form-label" })
+                    @Html.PasswordFor(x => x.Password, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(x => x.Password, "", new { @class = "text-danger" })
+                </div>
+                <button class="btn btn-primary w-100" type="submit">Giriş yap</button>
+            }
+        </section>
+    </main>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+</body>
+</html>

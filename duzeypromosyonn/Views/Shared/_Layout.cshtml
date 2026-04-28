@@ -1,0 +1,488 @@
+﻿@using duzeypromosyonn.Services
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Düzey Promosyon</title>
+    <meta name="description" content="Düzey Promosyon kurumsal promosyon ürünleri kataloğu." />
+    <link rel="icon" type="image/png" href="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" />
+    <link rel="shortcut icon" type="image/png" href="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" />
+    <link rel="dns-prefetch" href="//b2b.ilpen.com.tr" />
+    <link rel="preconnect" href="https://b2b.ilpen.com.tr" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <header class="site-header">
+        <div class="topbar">
+            <div class="container d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                <span>Fiyatlar baskısızdır. Baskılı fiyat için teklif alın.</span>
+                <span><strong>Telefon:</strong> <a href="tel:+902124179292">0212 417 92 92</a></span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+            <div class="container">
+                <a class="navbar-brand brand-logo" href="@Url.Action("Index", "DPromosyon")">
+                    <img src="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" alt="Düzey Promosyon" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Menüyü aç">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="offcanvas-lg offcanvas-start mobile-nav-panel" tabindex="-1" id="mainNav" aria-labelledby="mainNavLabel">
+                    <div class="offcanvas-header">
+                        <a class="mobile-nav-brand" href="@Url.Action("Index", "DPromosyon")" id="mainNavLabel">
+                            <img src="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" alt="Düzey Promosyon" />
+                        </a>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#mainNav" aria-label="Menüyü kapat"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav me-lg-auto mb-3 mb-lg-0 align-items-lg-center">
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "DPromosyon")">Anasayfa</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("Urunler", "DPromosyon")">Tüm Ürünler</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Kategoriler</a>
+                                <div class="dropdown-menu category-menu p-3">
+                                    <div class="category-menu-search">
+                                        <label class="visually-hidden" for="mobileCategorySearch">Kategori ara</label>
+                                        <input class="form-control" id="mobileCategorySearch" type="search" placeholder="Kategori ara" autocomplete="off" data-category-search />
+                                    </div>
+                                    <div class="row g-3 category-menu-grid">
+                                        @{
+                                            var menuColumns = new[] {
+                                                new {
+                                                    Title = "Teknolojik Ürünler",
+                                                    Items = new[] {
+                                                        new { Name = "Powerbank", RouteName = "Powerbank", Id = 1, AltKategori = "", Query = "" },
+                                                        new { Name = "Powerbank Organizerler", RouteName = "", Id = 0, AltKategori = "", Query = "Powerbank Organizer" },
+                                                        new { Name = "Wireless Şarj Cihazları", RouteName = "", Id = 0, AltKategori = "", Query = "Wireless Şarj" },
+                                                        new { Name = "USB Bellekler", RouteName = "USB Bellekler", Id = 75, AltKategori = "", Query = "" },
+                                                        new { Name = "Şarj Kabloları", RouteName = "", Id = 0, AltKategori = "", Query = "Şarj Kablosu" },
+                                                        new { Name = "Bluetooth Hoparlörler", RouteName = "", Id = 0, AltKategori = "", Query = "Bluetooth Hoparlör" },
+                                                        new { Name = "Akıllı Kol Saatleri", RouteName = "", Id = 0, AltKategori = "", Query = "Akıllı Kol Saati" },
+                                                        new { Name = "Kulaklıklar", RouteName = "", Id = 0, AltKategori = "", Query = "Kulaklık" },
+                                                        new { Name = "Diğer Ürünler", RouteName = "Teknolojik Ürünler", Id = 63, AltKategori = "", Query = "" }
+                                                    }
+                                                },
+                                                new {
+                                                    Title = "Yazım Gereçleri",
+                                                    Items = new[] {
+                                                        new { Name = "Kalem Setleri", RouteName = "Kalem Setleri", Id = 4, AltKategori = "", Query = "" },
+                                                        new { Name = "Metal Kalemler", RouteName = "Kalemler", Id = 7, AltKategori = "Metal Tükenmez Kalemler", Query = "" },
+                                                        new { Name = "Plastik Kalemler", RouteName = "Kalemler", Id = 7, AltKategori = "Plastik Tükenmez Kalemler", Query = "" },
+                                                        new { Name = "Leccepen Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Leccepen" },
+                                                        new { Name = "Dreampen Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Dreampen" },
+                                                        new { Name = "Schneider Kalemler", RouteName = "Kalemler", Id = 7, AltKategori = "SCHNEIDER Kalemler", Query = "" },
+                                                        new { Name = "Kurşun Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Kurşun Kalem" },
+                                                        new { Name = "Doğa Dostu Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Doğa Dostu Kalem" },
+                                                        new { Name = "Spiralli Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Spiralli Kalem" },
+                                                        new { Name = "Fosforlu Kalemler", RouteName = "", Id = 0, AltKategori = "", Query = "Fosforlu Kalem" }
+                                                    }
+                                                },
+                                                new {
+                                                    Title = "Ofis & İş Ürünleri",
+                                                    Items = new[] {
+                                                        new { Name = "Ajanda ve Organizerler", RouteName = "Ajandalar ve Organizerler", Id = 13, AltKategori = "", Query = "" },
+                                                        new { Name = "Defterler", RouteName = "Defterler", Id = 15, AltKategori = "", Query = "" },
+                                                        new { Name = "Çanta ve Toplantı Bloknotları", RouteName = "Çanta ve Toplantı Bloknotları", Id = 92, AltKategori = "", Query = "" },
+                                                        new { Name = "Masaüstü VIP Ürünler", RouteName = "Masaüstü VIP Ürünler", Id = 33, AltKategori = "", Query = "" },
+                                                        new { Name = "Masaüstü Ürünler", RouteName = "Masaüstü Ürünler", Id = 20, AltKategori = "", Query = "" },
+                                                        new { Name = "Gerçek Deri Ürünler", RouteName = "Deri Ürünler", Id = 85, AltKategori = "", Query = "" },
+                                                        new { Name = "Doğa Dostu Ürünler", RouteName = "Doğa Dostu Ürünler", Id = 16, AltKategori = "", Query = "" },
+                                                        new { Name = "Kırtasiye Ürünleri", RouteName = "Kırtasiye Ürünleri", Id = 96, AltKategori = "", Query = "" },
+                                                        new { Name = "Hesap Makineleri", RouteName = "Hesap Makineleri", Id = 28, AltKategori = "", Query = "" },
+                                                        new { Name = "Saatler", RouteName = "Duvar Saatleri", Id = 11, AltKategori = "", Query = "" },
+                                                        new { Name = "Plastik Ürünler", RouteName = "Plastik Ürünler", Id = 69, AltKategori = "", Query = "" },
+                                                        new { Name = "Matbaa Ürünleri", RouteName = "Matbaa Ürünleri", Id = 17, AltKategori = "", Query = "" }
+                                                    }
+                                                },
+                                                new {
+                                                    Title = "Kişisel Ürünler & Aksesuarlar",
+                                                    Items = new[] {
+                                                        new { Name = "VIP Setler", RouteName = "VIP Setler", Id = 83, AltKategori = "", Query = "" },
+                                                        new { Name = "Kristal ve Ödül Ürünleri", RouteName = "Kristal ve Ödül Ürünleri", Id = 22, AltKategori = "", Query = "" },
+                                                        new { Name = "Set ve Hediye Kutuları", RouteName = "", Id = 0, AltKategori = "", Query = "Hediye Kutusu" },
+                                                        new { Name = "Anahtarlık ve Rozetler", RouteName = "Anahtarlık ve Rozetler", Id = 18, AltKategori = "", Query = "" },
+                                                        new { Name = "Kartvizitlikler", RouteName = "Kartvizitlikler", Id = 21, AltKategori = "", Query = "" },
+                                                        new { Name = "Kol Düğmeleri", RouteName = "", Id = 0, AltKategori = "", Query = "Kol Düğmesi" },
+                                                        new { Name = "Bakım Setleri", RouteName = "", Id = 0, AltKategori = "", Query = "Bakım Seti" },
+                                                        new { Name = "Aynalar", RouteName = "", Id = 0, AltKategori = "", Query = "Ayna" },
+                                                        new { Name = "Özel Gün Setler", RouteName = "VIP Setler", Id = 83, AltKategori = "Özel Gün Setler", Query = "" },
+                                                        new { Name = "Diğer Ürünler", RouteName = "Kişisel Ürünler", Id = 24, AltKategori = "", Query = "" }
+                                                    }
+                                                },
+                                                new {
+                                                    Title = "Outdoor & Yaşam Ürünleri",
+                                                    Items = new[] {
+                                                        new { Name = "Termoslar ve Kupalar", RouteName = "Termoslar ve Kupalar", Id = 91, AltKategori = "", Query = "" },
+                                                        new { Name = "Şemsiye ve Yağmurluklar", RouteName = "", Id = 0, AltKategori = "", Query = "Şemsiye" },
+                                                        new { Name = "Şerit Metreler", RouteName = "Şerit Metre, Çakı ve Fenerler", Id = 70, AltKategori = "Şerit Metreler", Query = "" },
+                                                        new { Name = "Çakılar", RouteName = "Şerit Metre, Çakı ve Fenerler", Id = 70, AltKategori = "Çakılar", Query = "" },
+                                                        new { Name = "Fenerler", RouteName = "Şerit Metre, Çakı ve Fenerler", Id = 70, AltKategori = "Fenerler", Query = "" },
+                                                        new { Name = "Çakmaklar", RouteName = "Çakmaklar - Kibritler", Id = 105, AltKategori = "", Query = "" },
+                                                        new { Name = "Tekstil Ürünleri", RouteName = "Tekstil Ürünleri", Id = 30, AltKategori = "", Query = "" },
+                                                        new { Name = "Çocuk Ürünleri", RouteName = "Çocuk Ürünleri", Id = 117, AltKategori = "", Query = "" }
+                                                    }
+                                                }
+                                            };
+                                        }
+                                        @foreach (var column in menuColumns)
+                                        {
+                                            <div class="col-12 col-sm-6 col-lg category-menu-column">
+                                                <strong class="category-menu-title">@column.Title</strong>
+                                                @foreach (var cat in column.Items)
+                                                {
+                                                    var routeName = string.IsNullOrWhiteSpace(cat.RouteName) ? cat.Name : cat.RouteName;
+                                                    var categoryUrl = !string.IsNullOrWhiteSpace(cat.Query)
+                                                        ? Url.Action("Urunler", "DPromosyon", new { q = cat.Query })
+                                                        : (!string.IsNullOrWhiteSpace(cat.AltKategori)
+                                                            ? Url.Action("Urunler", "DPromosyon", new { kategoriId = cat.Id, altKategori = cat.AltKategori })
+                                                            : Url.RouteUrl("Category", new { title = ProductCatalogService.Slugify(routeName), id = cat.Id }));
+
+                                                    <a class="dropdown-item" href="@categoryUrl">@cat.Name</a>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="category-menu-empty" data-category-empty hidden>Sonuç bulunamadı.</div>
+                                </div>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Content("~/Content/2026-Katalog.pdf")" target="_blank">Katalog</a></li>
+                            <li class="nav-item"><a class="nav-link" href="@Url.Action("iletisim", "DPromosyon")">İletişim</a></li>
+                        </ul>
+                        <form class="d-flex search-form" role="search" method="get" action="@Url.Action("Urunler", "DPromosyon")">
+                            <input class="form-control" type="search" name="q" placeholder="Ürün, kod veya kategori ara" aria-label="Ürün ara" />
+                            <button class="btn btn-primary" type="submit">Ara</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        @if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+        {
+            <div class="container pt-3">
+                @Html.Partial("_Alerts")
+            </div>
+        }
+        @RenderBody()
+    </main>
+
+    <div class="modal fade promo-info-modal" id="promoInfoModal" tabindex="-1" aria-labelledby="promoInfoModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl promo-info-dialog">
+            <div class="modal-content promo-info-content">
+                <button type="button" class="promo-info-close" data-bs-dismiss="modal" aria-label="Bilgilendirmeyi kapat">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="promo-info-grid">
+                    <section class="promo-info-main" aria-labelledby="promoInfoModalTitle">
+                        <p class="promo-info-brand">DÜZEY</p>
+                        <h2 id="promoInfoModalTitle">PROMOSYON</h2>
+                        <p class="promo-info-lead">Markanızın tüm ihtiyaçları için <strong>buradayız!</strong></p>
+
+                        <div class="promo-info-features">
+                            <div class="promo-info-feature">
+                                <span class="promo-info-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M20.6 13.1 11 22.7 1.3 13V3.4h9.7l9.6 9.7Zm-15-5.5a2 2 0 1 0 4.1 0 2 2 0 0 0-4.1 0Z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <strong>Baskılı fiyatlar</strong>
+                                    <small>Tüm ürünlerde baskısız fiyat avantajı</small>
+                                </span>
+                            </div>
+                            <div class="promo-info-feature">
+                                <span class="promo-info-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M3 5h11v10h2.1l1.7 2.3h1.1V12l-2-3h-3.2V7h4.4l3.8 5.5V19h-3a3 3 0 0 1-5.8 0H9.9a3 3 0 0 1-5.8 0H3V5Zm4 13.8a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4Zm9 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4Z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <strong>Toptan tedarik</strong>
+                                    <small>Geniş ürün yelpazesi, hızlı teslimat</small>
+                                </span>
+                            </div>
+                            <div class="promo-info-feature">
+                                <span class="promo-info-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M12 2.2 4 5.5v6c0 5 3.4 9.6 8 10.8 4.6-1.2 8-5.8 8-10.8v-6l-8-3.3Zm3.8 7.4-4.7 5.3-2.8-2.8 1.4-1.4 1.3 1.3 3.3-3.8 1.5 1.4Z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    <strong>Güvenilir hizmet</strong>
+                                    <small>Kaliteli ürün, güvenilir alışveriş</small>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="promo-info-products" aria-hidden="true">
+                            <span class="promo-info-circle"></span>
+                            <img class="promo-product promo-product-bag" src="@Url.Content("~/Content/promosyon 2.2/img/urunler/ajanda2.jpg")" alt="" />
+                            <img class="promo-product promo-product-powerbank" src="@Url.Content("~/Content/promosyon 2.2/img/urunler/powerbank.jpg")" alt="" />
+                            <img class="promo-product promo-product-pen" src="@Url.Content("~/Content/promosyon 2.2/img/urunler/kalem.jpg")" alt="" />
+                        </div>
+                    </section>
+
+                    <aside class="promo-info-contact" aria-label="Teklif ve iletişim bilgileri">
+                        <div class="promo-support-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h2a4 4 0 0 1-4 4h-2v-2h2a2 2 0 0 0 2-2h1a3 3 0 0 0 3-3v-3a8 8 0 0 0-8-8Z" />
+                            </svg>
+                        </div>
+                        <h3>BİZE ULAŞIN</h3>
+                        <p>Baskılı fiyatlarımız için lütfen teklif alın.</p>
+
+                        <a class="promo-phone-card" href="tel:+902124179292">
+                            <span aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M6.6 2.8 10 6.2 8 8.7c1.2 2.5 3.1 4.4 5.6 5.6l2.5-2 3.4 3.4-1.2 3.1c-.4 1-1.4 1.6-2.5 1.4C9.7 19.2 4.7 14.3 3.7 8.1 3.5 7 4.1 6 5.1 5.6l1.5-2.8Z" />
+                                </svg>
+                            </span>
+                            <strong>0212 417 92 92</strong>
+                            <small>Pazartesi - Cuma / 09:00 - 18:00</small>
+                        </a>
+
+                        <div class="promo-social-block">
+                            <strong>BİZİ TAKİP EDİN</strong>
+                            <div class="promo-social-links">
+                                <a href="https://www.facebook.com/DuzeyAjans/" target="_blank" rel="noopener" aria-label="Facebook">
+                                    <img src="@Url.Content("~/Content/promosyon 2.2/img/iconlar/facebook.png")" alt="" />
+                                </a>
+                                <a href="https://www.instagram.com/duzeyajans/" target="_blank" rel="noopener" aria-label="Instagram">
+                                    <img src="@Url.Content("~/Content/promosyon 2.2/img/iconlar/instagram.png")" alt="" />
+                                </a>
+                                <a href="https://twitter.com/duzey_ajans" target="_blank" rel="noopener" aria-label="Twitter">
+                                    <img src="@Url.Content("~/Content/promosyon 2.2/img/iconlar/twitter.png")" alt="" />
+                                </a>
+                                <a href="https://www.youtube.com/channel/UCkU-AywtJXFyUuCotR2DaBA" target="_blank" rel="noopener" aria-label="YouTube">
+                                    <img src="@Url.Content("~/Content/promosyon 2.2/img/iconlar/youtube.png")" alt="" />
+                                </a>
+                            </div>
+                        </div>
+
+                        <a class="btn btn-primary promo-quote-btn" href="@Url.Action("iletisim", "DPromosyon")">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M6 2h9l5 5v15H6V2Zm8 1.7V8h4.3L14 3.7ZM8 12v2h8v-2H8Zm0 4v2h8v-2H8Z" />
+                            </svg>
+                            TEKLİF AL
+                        </a>
+                        <button type="button" class="promo-continue-btn" data-bs-dismiss="modal">
+                            Alışverişe devam et
+                            <span aria-hidden="true">›</span>
+                        </button>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="whatsapp-float" href="https://wa.me/905360752232" target="_blank" aria-label="WhatsApp ile teklif alın">
+        <img src="@Url.Content("~/Content/whatsapp-icon.svg")" alt="" aria-hidden="true" />
+    </a>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <img src="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" alt="Düzey Promosyon" class="footer-logo" />
+                    <p>Düzey Promosyon, kurumsal promosyon ürünlerinde kalite ve güvenin adresidir.</p>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <h2>Hızlı Erişim</h2>
+                    <a href="@Url.Action("Urunler", "DPromosyon")">Tüm Ürünler</a>
+                    <a href="@Url.Action("iletisim", "DPromosyon")">İletişim</a>
+                    <a href="@Url.Content("~/Content/2026-Katalog.pdf")" target="_blank">Katalog</a>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <h2>İletişim</h2>
+                    <a href="tel:+902124179292">+90 212 417 92 92</a>
+                    <a href="mailto:info@duzeypromosyon.com">info@duzeypromosyon.com</a>
+                    <span>İstanbul / Türkiye</span>
+                </div>
+                <div class="col-lg-2">
+                    <h2>Yönetim</h2>
+                    <a href="@Url.Action("Index", "Login")">Admin Girişi</a>
+                </div>
+            </div>
+            <div class="footer-bottom">© @DateTime.Now.Year Düzey Promosyon. Tüm hakları saklıdır.</div>
+        </div>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script>
+        (function () {
+            var modalStorageKey = 'duzeyPromoInfoModalDismissedUntil';
+            var modalCookieKey = 'duzeyPromoInfoModalDismissed';
+            var dismissDays = 30;
+
+            function hasSeenPromoInfoModal() {
+                var now = Date.now();
+                try {
+                    var storedUntil = parseInt(window.localStorage.getItem(modalStorageKey), 10);
+                    if (!isNaN(storedUntil) && storedUntil > now) {
+                        return true;
+                    }
+                } catch (error) {
+                    // Fall back to cookie below when localStorage is blocked.
+                }
+
+                return document.cookie.split(';').some(function (cookie) {
+                    return cookie.trim().indexOf(modalCookieKey + '=1') === 0;
+                });
+            }
+
+            function markPromoInfoModalSeen() {
+                var expiresAt = Date.now() + (dismissDays * 24 * 60 * 60 * 1000);
+                try {
+                    window.localStorage.setItem(modalStorageKey, expiresAt.toString());
+                } catch (error) {
+                    // Cookie still covers normal navigation if localStorage is unavailable.
+                }
+
+                document.cookie = modalCookieKey + '=1; Max-Age=' + (dismissDays * 24 * 60 * 60) + '; Path=/; SameSite=Lax';
+
+                if (location.hostname === 'duzeypromosyon.com' || location.hostname === 'www.duzeypromosyon.com') {
+                    document.cookie = modalCookieKey + '=1; Max-Age=' + (dismissDays * 24 * 60 * 60) + '; Path=/; Domain=.duzeypromosyon.com; SameSite=Lax';
+                }
+            }
+
+            function showPromoInfoModal() {
+                var modalElement = document.getElementById('promoInfoModal');
+                if (!modalElement || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+                    return;
+                }
+
+                if (hasSeenPromoInfoModal()) {
+                    return;
+                }
+
+                var modal = new bootstrap.Modal(modalElement);
+                modalElement.addEventListener('hide.bs.modal', markPromoInfoModalSeen, { once: true });
+                modalElement.addEventListener('hidden.bs.modal', markPromoInfoModalSeen, { once: true });
+                modal.show();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showPromoInfoModal);
+            } else {
+                showPromoInfoModal();
+            }
+        })();
+
+        (function () {
+            function updateProductImageState(image) {
+                var imageWrap = image.closest('.product-image');
+                if (!imageWrap) {
+                    return;
+                }
+
+                imageWrap.classList.remove('is-loading');
+
+                if (image.naturalWidth > 0) {
+                    imageWrap.classList.add('is-loaded');
+                    imageWrap.classList.remove('is-error');
+                } else {
+                    imageWrap.classList.add('is-error');
+                    imageWrap.classList.remove('is-loaded');
+                }
+            }
+
+            function bindProductImageStates() {
+                var images = document.querySelectorAll('.product-image img');
+
+                images.forEach(function (image) {
+                    if (image.complete) {
+                        updateProductImageState(image);
+                        return;
+                    }
+
+                    image.addEventListener('load', function () {
+                        updateProductImageState(image);
+                    }, { once: true });
+
+                    image.addEventListener('error', function () {
+                        updateProductImageState(image);
+                    }, { once: true });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bindProductImageStates);
+            } else {
+                bindProductImageStates();
+            }
+        })();
+
+        (function () {
+            function normalizeText(value) {
+                return (value || '')
+                    .toLocaleLowerCase('tr-TR')
+                    .replace(/ğ/g, 'g')
+                    .replace(/ü/g, 'u')
+                    .replace(/ş/g, 's')
+                    .replace(/ı/g, 'i')
+                    .replace(/ö/g, 'o')
+                    .replace(/ç/g, 'c');
+            }
+
+            function bindCategoryMenuSearch() {
+                var menu = document.querySelector('.category-menu');
+                if (!menu) {
+                    return;
+                }
+
+                var input = menu.querySelector('[data-category-search]');
+                var empty = menu.querySelector('[data-category-empty]');
+                var columns = Array.prototype.slice.call(menu.querySelectorAll('.category-menu-column'));
+
+                if (!input || !columns.length) {
+                    return;
+                }
+
+                input.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+
+                input.addEventListener('input', function () {
+                    var query = normalizeText(input.value);
+                    var totalVisible = 0;
+
+                    columns.forEach(function (column) {
+                        var title = column.querySelector('.category-menu-title');
+                        var titleMatches = title && normalizeText(title.textContent).indexOf(query) >= 0;
+                        var links = Array.prototype.slice.call(column.querySelectorAll('.dropdown-item'));
+                        var visibleInColumn = 0;
+
+                        links.forEach(function (link) {
+                            var isVisible = !query || titleMatches || normalizeText(link.textContent).indexOf(query) >= 0;
+                            link.hidden = !isVisible;
+
+                            if (isVisible) {
+                                visibleInColumn += 1;
+                            }
+                        });
+
+                        column.hidden = visibleInColumn === 0;
+                        totalVisible += visibleInColumn;
+                    });
+
+                    if (empty) {
+                        empty.hidden = totalVisible > 0;
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bindCategoryMenuSearch);
+            } else {
+                bindCategoryMenuSearch();
+            }
+        })();
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

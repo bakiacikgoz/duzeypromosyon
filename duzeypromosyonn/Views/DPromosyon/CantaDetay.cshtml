@@ -1,0 +1,56 @@
+﻿@model duzeypromosyonn.Models.Canta
+@{
+    ViewBag.Title = Model.Baslik;
+    var mainImageUrl = Url.Content(Model.ImageUrls.FirstOrDefault() ?? "~/Content/promosyon 2.2/img/kategori-8.jpg");
+}
+
+<section class="detail-shell">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="detail-image">
+                    <button class="detail-image-zoom-trigger" type="button" data-bs-toggle="modal" data-bs-target="#productImageModal" aria-label="@Model.Baslik görselini büyüt">
+                        <img src="@mainImageUrl" alt="@Model.Baslik" />
+                        <span class="detail-image-zoom-badge">
+                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                <path d="M10.5 4a6.5 6.5 0 0 1 5.1 10.5l4.4 4.4-1.4 1.4-4.4-4.4A6.5 6.5 0 1 1 10.5 4Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Zm-1 2.2h2v2h2v2h-2v2h-2v-2h-2v-2h2v-2Z" />
+                            </svg>
+                            Görseli büyüt
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <span class="eyebrow">VIP Çanta</span>
+                <h1>@Model.Baslik</h1>
+                <div class="detail-price">@Model.Fiyat.ToString("N2", new System.Globalization.CultureInfo("tr-TR")) TL + KDV</div>
+                <dl class="detail-facts">
+                    <div><dt>Ürün kodu</dt><dd>@Model.UrunKodu</dd></div>
+                    <div><dt>Görsel</dt><dd>@Model.ImageUrls.Count adet</dd></div>
+                </dl>
+                <div class="detail-actions">
+            <a class="btn btn-primary btn-lg" href="https://wa.me/905360752232?text=@HttpUtility.UrlEncode(Model.Baslik + " - " + Model.UrunKodu + " için teklif almak istiyorum.")" target="_blank">Teklif al</a>
+                    <a class="btn btn-outline-primary btn-lg" href="tel:+902124179292">Hemen ara</a>
+                </div>
+            </div>
+        </div>
+        <div class="content-panel detail-lower">
+            <h2>Ürün açıklaması</h2>
+            <div class="product-description">@Html.Raw(Model.Aciklama)</div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade product-image-modal" id="productImageModal" tabindex="-1" aria-labelledby="productImageModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="product-image-modal-title" id="productImageModalTitle">@Model.Baslik</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Görseli kapat"></button>
+            </div>
+            <div class="modal-body">
+                <img src="@mainImageUrl" alt="@Model.Baslik" />
+            </div>
+        </div>
+    </div>
+</div>

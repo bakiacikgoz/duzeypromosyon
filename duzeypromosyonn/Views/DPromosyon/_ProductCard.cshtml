@@ -1,0 +1,29 @@
+﻿@using duzeypromosyonn.Services
+@model duzeypromosyonn.Models.Product
+@{
+    var trCulture = new System.Globalization.CultureInfo("tr-TR");
+    var priceText = Model.Price == decimal.Truncate(Model.Price)
+        ? Model.Price.ToString("N0", trCulture)
+        : Model.Price.ToString("N2", trCulture);
+    var eagerImage = ViewData["EagerImage"] != null && Convert.ToBoolean(ViewData["EagerImage"]);
+    var imageLoading = eagerImage ? "eager" : "lazy";
+    var imageFetchPriority = eagerImage ? "high" : "auto";
+}
+<article class="product-card">
+    <a class="product-image is-loading" href="@Url.RouteUrl("ProductDetails", new { title = ProductCatalogService.Slugify(Model.Name), id = Model.Id })">
+        <img src="@Model.ImageUrl" alt="@Model.Name" loading="@imageLoading" decoding="async" fetchpriority="@imageFetchPriority" />
+    </a>
+    <div class="product-body">
+        <span class="product-category">@Model.CategoryMain</span>
+        <a class="product-title" href="@Url.RouteUrl("ProductDetails", new { title = ProductCatalogService.Slugify(Model.Name), id = Model.Id })">@Model.Name</a>
+        <div class="product-meta">
+            <span>Kod: @Model.GroupCode</span>
+            <span>@(Model.TotalStock > 0 ? "Stokta" : "Stok sorunuz")</span>
+        </div>
+        <div class="product-price">@priceText @Model.Currency + KDV</div>
+        <div class="product-actions">
+            <a class="btn btn-sm btn-outline-primary" href="@Url.RouteUrl("ProductDetails", new { title = ProductCatalogService.Slugify(Model.Name), id = Model.Id })">İncele</a>
+            <a class="btn btn-sm btn-primary" href="https://wa.me/905360752232?text=@HttpUtility.UrlEncode(Model.Name + " - " + Model.GroupCode + " için teklif almak istiyorum.")" target="_blank">Teklif al</a>
+        </div>
+    </div>
+</article>

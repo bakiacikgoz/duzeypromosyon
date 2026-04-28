@@ -1,0 +1,117 @@
+body{
+    padding: 0px;
+    margin: 0px;
+}
+.lightbox{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position:fixed !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(0,0,0,.4) !important;
+    z-index: 9999 !important;
+    /*
+    animation: duyuruKapat 5s 1;
+    visibility: hidden;
+    */
+}
+.pop-div{
+    background: white !important;
+    justify-content:center !important;
+    align-items:center !important;
+    padding: 0.5em !important;
+    height:auto !important;
+    position: relative !important;
+    border-radius: 16px;
+}
+.pop-img{         
+    width: 100% !important;
+}
+
+.pop-a{
+    position: absolute !important;
+    right: -10px !important;
+    top: -20px !important;
+    display: block !important;
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    text-decoration: none !important;
+    background: black !important;
+    color: white !important;
+    border-radius: 20px !important;
+    font-weight: bolder !important;
+}
+.pop-a::before{
+    content: '' !important;
+    display: block !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: white !important; 
+    position: absolute !important;
+    z-index: -1 !important;
+    border-radius: 20px !important;
+    top: -5px !important;
+    right: -5px !important;
+    
+}
+.pop-p{
+    font-size: 1.2rem !important;
+}
+.lightbox:target{
+    animation: none !important;
+    visibility: hidden !important;
+}
+@media screen and (max-width:1630px) {
+    .pop-h{
+        font-size: 2rem !important;
+    }
+    .pop-p{
+        font-size: 1rem !important;
+    }
+}
+@media screen and (max-width:1200px) {
+    .pop-h{
+        font-size: 1.4rem !important;
+    }
+    .pop-p{
+        font-size: 1rem !important;
+    }
+    .pop-div{
+        background: white !important;
+        justify-content:center !important;
+        align-items:center !important;
+        padding: 1em !important;
+        height:auto !important;
+        position: relative !important;
+    }
+    .pop-sosyal{
+        width: 35px !important;
+    }
+}
+@media screen and (max-width:992px) {
+    .lightbox{
+        display: none !important;
+    }
+}
+
+
+@keyframes duyuruKapat{
+    0%{
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    80%{
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    100%{
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+}

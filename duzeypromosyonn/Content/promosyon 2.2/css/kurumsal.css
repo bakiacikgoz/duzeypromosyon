@@ -1,0 +1,18 @@
+@import url('http://fonts.cdnfonts.com/css/mark-pro');
+body{
+    font-family: 'Mark Pro', sans-serif !important;
+}
+.kurumsal-h{
+    font-size: 2.5rem !important;
+    font-weight: 900 !important;
+}
+.kurumsal-icerik p{
+font-size: 1.4rem;    
+font-weight: 350 !important;
+}
+@media screen and (max-width:992px) {
+    .kurumsal-icerik p{
+        font-size: 1.3rem;    
+        font-weight: 350 !important;
+        }
+}

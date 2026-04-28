@@ -1,0 +1,39 @@
+﻿@model duzeypromosyonn.Models.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Yönetim Paneli";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-page-heading">
+    <div>
+        <span class="eyebrow">Yönetim</span>
+        <h1>Panel</h1>
+    </div>
+    @using (Html.BeginForm("Update", "Admin", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <button class="btn btn-primary" type="submit">XML kataloğu şimdi güncelle</button>
+    }
+</div>
+
+<div class="admin-stat-grid">
+    <div class="admin-stat"><span>XML ürün</span><strong>@Model.ProductCount.ToString("N0")</strong></div>
+    <div class="admin-stat"><span>Kategori</span><strong>@Model.CategoryCount.ToString("N0")</strong></div>
+    <div class="admin-stat"><span>Slider</span><strong>@Model.SliderCount.ToString("N0")</strong></div>
+    <div class="admin-stat"><span>VIP Çanta</span><strong>@Model.CantaCount.ToString("N0")</strong></div>
+</div>
+
+<section class="admin-card">
+    <h2>XML durum bilgisi</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                <tr><th>Kaynak</th><td>@Model.XmlStatus.SourceUrl</td></tr>
+                <tr><th>Son deneme</th><td>@(Model.XmlStatus.LastAttemptAt.HasValue ? Model.XmlStatus.LastAttemptAt.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td></tr>
+                <tr><th>Son başarılı güncelleme</th><td>@(Model.XmlStatus.LastSuccessAt.HasValue ? Model.XmlStatus.LastSuccessAt.Value.ToString("dd.MM.yyyy HH:mm") : "-")</td></tr>
+                <tr><th>Son ürün sayısı</th><td>@Model.XmlStatus.LastProductCount.ToString("N0")</td></tr>
+                <tr><th>Son hata</th><td>@(string.IsNullOrWhiteSpace(Model.XmlStatus.LastError) ? "-" : Model.XmlStatus.LastError)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>

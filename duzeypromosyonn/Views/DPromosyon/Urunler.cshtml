@@ -1,0 +1,246 @@
+﻿@using duzeypromosyonn.Services
+@model duzeypromosyonn.Models.ProductSearchResult
+@{
+    ViewBag.Title = "Ürünler";
+    var selectedCategory = Model.Query.CategoryId.HasValue
+        ? Model.Categories.FirstOrDefault(x => x.Id == Model.Query.CategoryId.Value)
+        : null;
+    var catalogTitle = selectedCategory == null ? Model.TotalCount.ToString("N0") + " ürün bulundu" : selectedCategory.Name;
+    var catalogDescription = selectedCategory == null
+        ? "Kategori, fiyat, stok ve renge göre tüm ürünleri filtreleyin."
+        : Model.TotalCount.ToString("N0") + " ürün bulundu. Fiyat, stok ve renge göre listeyi daraltın.";
+    var activeFilterCount = 0;
+    if (!string.IsNullOrWhiteSpace(Model.Query.Q)) { activeFilterCount++; }
+    if (Model.Query.CategoryId.HasValue) { activeFilterCount++; }
+    if (!string.IsNullOrWhiteSpace(Model.Query.AltKategori)) { activeFilterCount++; }
+    if (Model.Query.MinPrice.HasValue) { activeFilterCount++; }
+    if (Model.Query.MaxPrice.HasValue) { activeFilterCount++; }
+    if (Model.Query.InStock.HasValue) { activeFilterCount++; }
+    if (!string.IsNullOrWhiteSpace(Model.Query.Color)) { activeFilterCount++; }
+
+    var sortLabel = "Önerilen";
+    if (Model.Query.Sort == "price-asc") { sortLabel = "Fiyat artan"; }
+    else if (Model.Query.Sort == "price-desc") { sortLabel = "Fiyat azalan"; }
+    else if (Model.Query.Sort == "name-asc") { sortLabel = "Ada göre"; }
+    else if (Model.Query.Sort == "stock-desc") { sortLabel = "Stok yüksek"; }
+}
+
+@functions {
+    string PageUrl(int page)
+    {
+        return Url.Action("Urunler", "DPromosyon", new
+        {
+            q = Model.Query.Q,
+            kategoriId = Model.Query.CategoryId,
+            altKategori = Model.Query.AltKategori,
+            minPrice = Model.Query.MinPrice,
+            maxPrice = Model.Query.MaxPrice,
+            inStock = Model.Query.InStock,
+            color = Model.Query.Color,
+            sort = Model.Query.Sort,
+            page = page,
+            pageSize = Model.PageSize
+        });
+    }
+}
+
+<section class="catalog-shell">
+    <div class="container-fluid">
+        <div class="catalog-header">
+            <div class="catalog-header-main">
+                <div class="catalog-breadcrumb" aria-label="Sayfa konumu">
+                    <a href="@Url.Action("Index", "DPromosyon")" aria-label="Anasayfa">⌂</a>
+                    <span>/</span>
+                    <strong>Ürün kataloğu</strong>
+                </div>
+                <h1>@catalogTitle</h1>
+                <p>@catalogDescription</p>
+                <div class="catalog-filter-chips" aria-label="Seçili filtreler">
+                    <button class="catalog-filter-toggle filter-mobile-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#catalogFilters" aria-expanded="false" aria-controls="catalogFilters">
+                        <span class="filter-icon" aria-hidden="true"></span>
+                        <span class="filter-label">Filtreler</span>
+                    </button>
+                    <span class="catalog-chip">@(selectedCategory == null ? "Tüm kategoriler" : selectedCategory.Name)</span>
+                    @if (Model.Query.InStock == true)
+                    {
+                        <span class="catalog-chip">Stokta</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Query.AltKategori))
+                    {
+                        <span class="catalog-chip">@Model.Query.AltKategori</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Query.Color))
+                    {
+                        <span class="catalog-chip">@Model.Query.Color</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Query.Q))
+                    {
+                        <span class="catalog-chip">"@Model.Query.Q"</span>
+                    }
+                    @if (Model.Query.MinPrice.HasValue || Model.Query.MaxPrice.HasValue)
+                    {
+                        <span class="catalog-chip">@((Model.Query.MinPrice.HasValue ? Model.Query.MinPrice.Value.ToString("N0") + " TL" : "0 TL") + " - " + (Model.Query.MaxPrice.HasValue ? Model.Query.MaxPrice.Value.ToString("N0") + " TL" : "üstü"))</span>
+                    }
+                    @if (activeFilterCount > 0)
+                    {
+                        <a class="catalog-clear-link" href="@Url.Action("Urunler", "DPromosyon")">Tüm filtreleri temizle</a>
+                    }
+                </div>
+            </div>
+            <div class="catalog-header-actions">
+                <form class="catalog-sort-form" method="get" action="@Url.Action("Urunler", "DPromosyon")">
+                    <input type="hidden" name="q" value="@Model.Query.Q" />
+                    <input type="hidden" name="kategoriId" value="@Model.Query.CategoryId" />
+                    <input type="hidden" name="altKategori" value="@Model.Query.AltKategori" />
+                    <input type="hidden" name="minPrice" value="@Model.Query.MinPrice" />
+                    <input type="hidden" name="maxPrice" value="@Model.Query.MaxPrice" />
+                    <input type="hidden" name="inStock" value="@(Model.Query.InStock.HasValue ? Model.Query.InStock.Value.ToString().ToLowerInvariant() : "")" />
+                    <input type="hidden" name="color" value="@Model.Query.Color" />
+                    <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                    <label for="catalogSort">Sıralama:</label>
+                    <select class="form-select" id="catalogSort" name="sort" onchange="this.form.submit()">
+                        <option value="" @(string.IsNullOrWhiteSpace(Model.Query.Sort) ? "selected" : "")>@sortLabel</option>
+                        <option value="price-asc" @(Model.Query.Sort == "price-asc" ? "selected" : "")>Fiyat: düşükten yükseğe</option>
+                        <option value="price-desc" @(Model.Query.Sort == "price-desc" ? "selected" : "")>Fiyat: yüksekten düşüğe</option>
+                        <option value="name-asc" @(Model.Query.Sort == "name-asc" ? "selected" : "")>Ürün adı: A-Z</option>
+                        <option value="stock-desc" @(Model.Query.Sort == "stock-desc" ? "selected" : "")>Stok: yüksekten düşüğe</option>
+                    </select>
+                </form>
+                <a class="btn btn-primary catalog-quote-btn" href="https://wa.me/905360752232?text=Merhaba%2C%20toplu%20teklif%20almak%20istiyorum." target="_blank" rel="noopener"><span aria-hidden="true">☷</span> Toplu teklif al</a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <aside class="col-xl-2 filter-aside collapse" id="catalogFilters">
+                <form class="filter-panel" method="get" action="@Url.Action("Urunler", "DPromosyon")">
+                    <div class="filter-panel-header">
+                        <div>
+                            <span>Filtreler</span>
+                            <strong>@activeFilterCount aktif</strong>
+                        </div>
+                        <a href="@Url.Action("Urunler", "DPromosyon")">Temizle</a>
+                    </div>
+
+                    <div class="filter-section">
+                        <label class="form-label" for="q">Arama</label>
+                        <input class="form-control" id="q" name="q" value="@Model.Query.Q" placeholder="Ürün adı, kod, kategori" />
+                    </div>
+
+                    <div class="filter-section">
+                        <label class="form-label" for="kategoriId">Kategori</label>
+                        <select class="form-select" id="kategoriId" name="kategoriId">
+                            <option value="">Tüm kategoriler</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.Id" @(Model.Query.CategoryId == category.Id ? "selected" : "")>@category.Name (@category.Count)</option>
+                            }
+                        </select>
+
+                        <label class="form-label" for="altKategori">Alt kategori</label>
+                        <select class="form-select" id="altKategori" name="altKategori">
+                            <option value="">Tümü</option>
+                            @foreach (var sub in Model.SubCategories)
+                            {
+                                <option value="@sub" @(string.Equals(Model.Query.AltKategori, sub, StringComparison.OrdinalIgnoreCase) ? "selected" : "")>@sub</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label" for="minPrice">Min fiyat</label>
+                                <input class="form-control" id="minPrice" name="minPrice" type="number" step="1" value="@Model.Query.MinPrice" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" for="maxPrice">Max fiyat</label>
+                                <input class="form-control" id="maxPrice" name="maxPrice" type="number" step="1" value="@Model.Query.MaxPrice" />
+                            </div>
+                        </div>
+
+                        <label class="form-label" for="color">Renk / varyant</label>
+                        <select class="form-select" id="color" name="color">
+                            <option value="">Tümü</option>
+                            @foreach (var color in Model.Colors)
+                            {
+                                <option value="@color" @(string.Equals(Model.Query.Color, color, StringComparison.OrdinalIgnoreCase) ? "selected" : "")>@color</option>
+                            }
+                        </select>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="true" id="inStock" name="inStock" @(Model.Query.InStock == true ? "checked" : "") />
+                            <label class="form-check-label" for="inStock">Sadece stoklu ürünler</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <label class="form-label" for="sort">Sıralama</label>
+                        <select class="form-select" id="sort" name="sort">
+                            <option value="" @(string.IsNullOrWhiteSpace(Model.Query.Sort) ? "selected" : "")>Varsayılan</option>
+                            <option value="price-asc" @(Model.Query.Sort == "price-asc" ? "selected" : "")>Fiyat: düşükten yükseğe</option>
+                            <option value="price-desc" @(Model.Query.Sort == "price-desc" ? "selected" : "")>Fiyat: yüksekten düşüğe</option>
+                            <option value="name-asc" @(Model.Query.Sort == "name-asc" ? "selected" : "")>Ürün adı: A-Z</option>
+                            <option value="stock-desc" @(Model.Query.Sort == "stock-desc" ? "selected" : "")>Stok: yüksekten düşüğe</option>
+                        </select>
+
+                        <label class="form-label" for="pageSize">Sayfa başına</label>
+                        <select class="form-select" id="pageSize" name="pageSize">
+                            <option value="24" @(Model.PageSize == 24 ? "selected" : "")>24</option>
+                            <option value="48" @(Model.PageSize == 48 ? "selected" : "")>48</option>
+                            <option value="72" @(Model.PageSize == 72 ? "selected" : "")>72</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-primary w-100" type="submit">Filtrele</button>
+                </form>
+            </aside>
+
+            <div class="col-xl-10 catalog-results">
+                @if (!Model.Items.Any())
+                {
+                    <div class="empty-state">
+                        <h2>Bu filtrelerle ürün bulunamadı.</h2>
+                        <p>Arama kelimesini kısaltın veya bazı filtreleri temizleyin.</p>
+                        <a class="btn btn-outline-primary" href="@Url.Action("Urunler", "DPromosyon")">Filtreleri temizle</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="product-grid catalog-grid">
+                        @for (var productIndex = 0; productIndex < Model.Items.Count; productIndex++)
+                        {
+                            var product = Model.Items[productIndex];
+                            @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 8 } })
+                        }
+                    </div>
+
+                    <nav class="catalog-pager" aria-label="Ürün sayfaları">
+                        <a class="btn btn-outline-primary @(Model.Page <= 1 ? "disabled" : "")" href="@PageUrl(Model.Page - 1)">Önceki</a>
+                        <span>Sayfa @Model.Page / @Model.TotalPages</span>
+                        <a class="btn btn-outline-primary @(Model.Page >= Model.TotalPages ? "disabled" : "")" href="@PageUrl(Model.Page + 1)">Sonraki</a>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts {
+    <script>
+        (function () {
+            var filterPanel = document.getElementById("catalogFilters");
+            var toggle = document.querySelector(".filter-mobile-toggle");
+            if (!filterPanel || !toggle) {
+                return;
+            }
+
+            filterPanel.addEventListener("shown.bs.collapse", function () {
+                toggle.setAttribute("aria-expanded", "true");
+            });
+
+            filterPanel.addEventListener("hidden.bs.collapse", function () {
+                toggle.setAttribute("aria-expanded", "false");
+            });
+        })();
+    </script>
+}
