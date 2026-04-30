@@ -77,7 +77,7 @@ namespace duzeypromosyonn.Controllers
             int value;
             return int.TryParse(ConfigurationManager.AppSettings["ProductImageWarmupLimit"], out value) && value > 0
                 ? value
-                : 72;
+                : 200;
         }
     }
 }

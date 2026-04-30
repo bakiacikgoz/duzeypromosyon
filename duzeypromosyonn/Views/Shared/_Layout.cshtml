@@ -1,4 +1,7 @@
 ﻿@using duzeypromosyonn.Services
+@{
+    var siteCssVersion = System.IO.File.GetLastWriteTimeUtc(Server.MapPath("~/Content/Site.css")).Ticks;
+}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -10,7 +13,8 @@
     <link rel="shortcut icon" type="image/png" href="@Url.Content("~/Content/promosyon 2.2/img/logo.png")" />
     <link rel="dns-prefetch" href="//b2b.ilpen.com.tr" />
     <link rel="preconnect" href="https://b2b.ilpen.com.tr" />
-    @Styles.Render("~/Content/css")
+    <link href="@Url.Content("~/Content/bootstrap.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Site.css")?v=@siteCssVersion" rel="stylesheet" />
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>

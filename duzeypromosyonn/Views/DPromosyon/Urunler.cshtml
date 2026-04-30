@@ -23,6 +23,8 @@
     if (Model.Query.InStock.HasValue) { activeFilterCount++; }
     if (!string.IsNullOrWhiteSpace(Model.Query.Color)) { activeFilterCount++; }
 
+    var hasPreviousPage = Model.Page > 1;
+    var hasNextPage = Model.Page < Model.TotalPages;
     var sortLabel = "Önerilen";
     if (Model.Query.Sort == "price-asc") { sortLabel = "Fiyat artan"; }
     else if (Model.Query.Sort == "price-desc") { sortLabel = "Fiyat azalan"; }
@@ -220,9 +222,90 @@
                     </div>
 
                     <nav class="catalog-pager" aria-label="Ürün sayfaları">
-                        <a class="btn btn-outline-primary @(Model.Page <= 1 ? "disabled" : "")" href="@PageUrl(Model.Page - 1)">Önceki</a>
-                        <span>Sayfa @Model.Page / @Model.TotalPages</span>
-                        <a class="btn btn-outline-primary @(Model.Page >= Model.TotalPages ? "disabled" : "")" href="@PageUrl(Model.Page + 1)">Sonraki</a>
+                        <a class="catalog-pager-btn @(hasPreviousPage ? "" : "is-disabled")"
+                           href="@(hasPreviousPage ? PageUrl(Model.Page - 1) : "#")"
+                           aria-disabled="@((!hasPreviousPage).ToString().ToLowerInvariant())"
+                           tabindex="@(hasPreviousPage ? "0" : "-1")"
+                           aria-label="Önceki sayfa">
+                            <span aria-hidden="true">‹</span>
+                        </a>
+                        @if (Model.TotalPages <= 7)
+                        {
+                            for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+                            {
+                                if (pageNumber == Model.Page)
+                                {
+                                    <span class="catalog-pager-page is-current" aria-current="page">@pageNumber</span>
+                                }
+                                else
+                                {
+                                    <a class="catalog-pager-page" href="@PageUrl(pageNumber)" aria-label="@("Sayfa " + pageNumber)">@pageNumber</a>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var middleStart = Math.Max(2, Model.Page - 1);
+                            var middleEnd = Math.Min(Model.TotalPages - 1, Model.Page + 1);
+
+                            if (Model.Page <= 4)
+                            {
+                                middleStart = 2;
+                                middleEnd = 4;
+                            }
+                            else if (Model.Page >= Model.TotalPages - 3)
+                            {
+                                middleStart = Model.TotalPages - 3;
+                                middleEnd = Model.TotalPages - 1;
+                            }
+
+                            if (Model.Page == 1)
+                            {
+                                <span class="catalog-pager-page is-current" aria-current="page">1</span>
+                            }
+                            else
+                            {
+                                <a class="catalog-pager-page" href="@PageUrl(1)" aria-label="Sayfa 1">1</a>
+                            }
+
+                            if (middleStart > 2)
+                            {
+                                <span class="catalog-pager-ellipsis" aria-hidden="true">...</span>
+                            }
+
+                            for (var pageNumber = middleStart; pageNumber <= middleEnd; pageNumber++)
+                            {
+                                if (pageNumber == Model.Page)
+                                {
+                                    <span class="catalog-pager-page is-current" aria-current="page">@pageNumber</span>
+                                }
+                                else
+                                {
+                                    <a class="catalog-pager-page" href="@PageUrl(pageNumber)" aria-label="@("Sayfa " + pageNumber)">@pageNumber</a>
+                                }
+                            }
+
+                            if (middleEnd < Model.TotalPages - 1)
+                            {
+                                <span class="catalog-pager-ellipsis" aria-hidden="true">...</span>
+                            }
+
+                            if (Model.Page == Model.TotalPages)
+                            {
+                                <span class="catalog-pager-page is-current" aria-current="page">@Model.TotalPages</span>
+                            }
+                            else
+                            {
+                                <a class="catalog-pager-page" href="@PageUrl(Model.TotalPages)" aria-label="@("Sayfa " + Model.TotalPages)">@Model.TotalPages</a>
+                            }
+                        }
+                        <a class="catalog-pager-btn catalog-pager-next @(hasNextPage ? "" : "is-disabled")"
+                           href="@(hasNextPage ? PageUrl(Model.Page + 1) : "#")"
+                           aria-disabled="@((!hasNextPage).ToString().ToLowerInvariant())"
+                           tabindex="@(hasNextPage ? "0" : "-1")"
+                           aria-label="Sonraki sayfa">
+                            <span aria-hidden="true">›</span>
+                        </a>
                     </nav>
                 }
             </div>

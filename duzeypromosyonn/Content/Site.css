@@ -1029,11 +1029,86 @@ a:hover {
 }
 
 .catalog-pager {
+    width: fit-content;
+    max-width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
+    flex-wrap: wrap;
+    gap: 0.42rem;
+    margin: 2.25rem auto 0;
+    padding: 0.5rem;
+    border: 1px solid #dfe5ef;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(16, 42, 99, 0.12);
+}
+
+.catalog-pager-btn,
+.catalog-pager-page {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e4e8f0;
+    border-radius: 9px;
+    background: #fff;
+    color: #344054;
+    font-size: 0.94rem;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 4px 12px rgba(16, 42, 99, 0.06);
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.catalog-pager-btn {
+    color: #344054;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.catalog-pager-page.is-current {
+    border-color: #4f7df3;
+    background: #4f7df3;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(79, 125, 243, 0.28);
+}
+
+.catalog-pager-btn:not(.is-disabled):hover,
+.catalog-pager-btn:not(.is-disabled):focus,
+.catalog-pager-page:not(.is-current):hover,
+.catalog-pager-page:not(.is-current):focus {
+    border-color: #cbd8ff;
+    background: #f3f6ff;
+    color: #315fd9;
+    box-shadow: 0 6px 16px rgba(79, 125, 243, 0.16);
+}
+
+.catalog-pager-btn:focus-visible,
+.catalog-pager-page:focus-visible {
+    outline: 3px solid rgba(29, 79, 145, 0.22);
+    outline-offset: 2px;
+}
+
+.catalog-pager-btn.is-disabled {
+    cursor: default;
+    pointer-events: none;
+    border-color: #e2e8f0;
+    background: #f8fafc;
+    color: #9aa6b8;
+    box-shadow: none;
+}
+
+.catalog-pager-ellipsis {
+    min-width: 28px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #667085;
+    font-size: 0.92rem;
+    font-weight: 850;
 }
 
 .empty-state {
@@ -2925,6 +3000,19 @@ a:hover {
 }
 
 @media (max-width: 575.98px) {
+    .catalog-pager {
+        gap: 0.28rem;
+        margin-top: 1.8rem;
+        padding: 0.34rem;
+    }
+
+    .catalog-pager-btn,
+    .catalog-pager-page {
+        width: 31px;
+        height: 31px;
+        font-size: 0.86rem;
+    }
+
     .topbar .container {
         align-items: flex-start !important;
         flex-direction: column;
