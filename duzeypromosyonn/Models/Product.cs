@@ -16,6 +16,7 @@ namespace duzeypromosyonn.Models
         public string GroupCode { get; set; }
         public string Name { get; set; }
         public string ImageUrl { get; set; }
+        public string ImageVersion { get; set; }
         public string IntroHtml { get; set; }
         public string DescriptionHtml { get; set; }
         public string CategoryMain { get; set; }

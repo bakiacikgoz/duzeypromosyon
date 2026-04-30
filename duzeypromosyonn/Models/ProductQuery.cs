@@ -23,7 +23,7 @@ namespace duzeypromosyonn.Models
             get
             {
                 if (PageSize <= 0) return 24;
-                if (PageSize > 96) return 96;
+                if (PageSize > 36) return 36;
                 return PageSize;
             }
         }

@@ -2,13 +2,18 @@
 @model duzeypromosyonn.Models.ProductSearchResult
 @{
     ViewBag.Title = "Ürünler";
-    var selectedCategory = Model.Query.CategoryId.HasValue
+    var selectedCategory = Model.SelectedCategory ?? (Model.Query.CategoryId.HasValue
         ? Model.Categories.FirstOrDefault(x => x.Id == Model.Query.CategoryId.Value)
-        : null;
-    var catalogTitle = selectedCategory == null ? Model.TotalCount.ToString("N0") + " ürün bulundu" : selectedCategory.Name;
+        : null);
+    var resultCountText = Model.TotalCount.ToString("N0") + " ürün";
+    if (Model.TotalVariantCount > 0)
+    {
+        resultCountText += ", " + Model.TotalVariantCount.ToString("N0") + " varyant";
+    }
+    var catalogTitle = selectedCategory == null ? resultCountText + " bulundu" : selectedCategory.Name;
     var catalogDescription = selectedCategory == null
         ? "Kategori, fiyat, stok ve renge göre tüm ürünleri filtreleyin."
-        : Model.TotalCount.ToString("N0") + " ürün bulundu. Fiyat, stok ve renge göre listeyi daraltın.";
+        : resultCountText + " bulundu. Fiyat, stok ve renge göre listeyi daraltın.";
     var activeFilterCount = 0;
     if (!string.IsNullOrWhiteSpace(Model.Query.Q)) { activeFilterCount++; }
     if (Model.Query.CategoryId.HasValue) { activeFilterCount++; }
@@ -132,7 +137,7 @@
                             <option value="">Tüm kategoriler</option>
                             @foreach (var category in Model.Categories)
                             {
-                                <option value="@category.Id" @(Model.Query.CategoryId == category.Id ? "selected" : "")>@category.Name (@category.Count)</option>
+                                <option value="@category.Id" @(Model.Query.CategoryId == category.Id || (selectedCategory != null && selectedCategory.Id == category.Id) ? "selected" : "")>@category.Name (@category.Count)</option>
                             }
                         </select>
 
@@ -185,9 +190,9 @@
 
                         <label class="form-label" for="pageSize">Sayfa başına</label>
                         <select class="form-select" id="pageSize" name="pageSize">
+                            <option value="12" @(Model.PageSize == 12 ? "selected" : "")>12</option>
                             <option value="24" @(Model.PageSize == 24 ? "selected" : "")>24</option>
-                            <option value="48" @(Model.PageSize == 48 ? "selected" : "")>48</option>
-                            <option value="72" @(Model.PageSize == 72 ? "selected" : "")>72</option>
+                            <option value="36" @(Model.PageSize == 36 ? "selected" : "")>36</option>
                         </select>
                     </div>
 
@@ -210,7 +215,7 @@
                         @for (var productIndex = 0; productIndex < Model.Items.Count; productIndex++)
                         {
                             var product = Model.Items[productIndex];
-                            @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 8 } })
+                            @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 4 } })
                         }
                     </div>
 

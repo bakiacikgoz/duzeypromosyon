@@ -15,10 +15,12 @@ namespace duzeypromosyonn.Models
 
         public IList<Product> Items { get; set; }
         public int TotalCount { get; set; }
+        public int TotalVariantCount { get; set; }
         public int TotalPages { get; set; }
         public int Page { get; set; }
         public int PageSize { get; set; }
         public ProductQuery Query { get; set; }
+        public CategoryInfo SelectedCategory { get; set; }
         public IList<CategoryInfo> Categories { get; set; }
         public IList<string> SubCategories { get; set; }
         public IList<string> Colors { get; set; }

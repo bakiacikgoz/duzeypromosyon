@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -13,6 +14,17 @@ namespace duzeypromosyonn.Services
     public class ProductCatalogService
     {
         private static readonly object CacheLock = new object();
+        private static readonly CategoryAliasRule[] CategoryAliases =
+        {
+            new CategoryAliasRule(
+                "Kristal ve \u00d6d\u00fcl \u00dcr\u00fcnleri",
+                22,
+                new[] { 22, 77, 94 },
+                MatchesAwardCategoryProduct)
+        };
+
+        private const string ImageVersionPrefix = "img-v2-";
+
         private static string _cachedPath;
         private static DateTime _cachedWriteTime;
         private static ProductCatalog _cachedCatalog;
@@ -72,7 +84,7 @@ namespace duzeypromosyonn.Services
             CategoryInfo selectedCategory = null;
             if (query.CategoryId.HasValue && query.CategoryId.Value > 0)
             {
-                selectedCategory = catalog.Categories.FirstOrDefault(category => category.Id == query.CategoryId.Value);
+                selectedCategory = FindSelectedCategory(catalog, query.CategoryId.Value);
                 products = products.Where(product => MatchesCategory(product, query.CategoryId.Value)
                     || (selectedCategory != null && string.Equals(product.CategoryMain, selectedCategory.Name, StringComparison.OrdinalIgnoreCase)));
             }
@@ -101,9 +113,7 @@ namespace duzeypromosyonn.Services
 
             if (query.InStock.HasValue)
             {
-                products = query.InStock.Value
-                    ? products.Where(product => product.TotalStock > 0 || product.Options.Any(option => option.StockQuantity > 0))
-                    : products.Where(product => product.TotalStock <= 0 && product.Options.All(option => option.StockQuantity <= 0));
+                products = products.Where(product => MatchesStockFilter(product, query.InStock.Value, query.Color));
             }
 
             var colorScopedProducts = products.ToList();
@@ -122,6 +132,7 @@ namespace duzeypromosyonn.Services
 
             var filtered = products.ToList();
             var totalCount = filtered.Count;
+            var totalVariantCount = filtered.Sum(product => product.Options.Count);
             var pageSize = query.EffectivePageSize;
             var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
             var page = Math.Min(query.EffectivePage, totalPages);
@@ -131,10 +142,12 @@ namespace duzeypromosyonn.Services
             {
                 Items = items,
                 TotalCount = totalCount,
+                TotalVariantCount = totalVariantCount,
                 TotalPages = totalPages,
                 Page = page,
                 PageSize = pageSize,
                 Query = query,
+                SelectedCategory = selectedCategory,
                 Categories = catalog.Categories,
                 SubCategories = subCategories.Any() ? subCategories : catalog.SubCategories,
                 Colors = colors.Any() ? colors : catalog.Colors,
@@ -162,11 +175,10 @@ namespace duzeypromosyonn.Services
                         ? new List<ProductOption>()
                         : node.Element("UrunSecenek").Elements("Secenek").Select(ParseOption).ToList();
 
-                    var totalStock = ParseInt(Value(node, "TumVaryantToplamStokAdedi"));
-                    if (totalStock == 0 && options.Any())
-                    {
-                        totalStock = options.Sum(option => option.StockQuantity);
-                    }
+                    var totalStock = options.Any()
+                        ? options.Sum(option => option.StockQuantity)
+                        : ParseInt(Value(node, "TumVaryantToplamStokAdedi"));
+                    var imageUrl = Value(node, "ResimUrl");
 
                     products.Add(new Product
                     {
@@ -182,7 +194,8 @@ namespace duzeypromosyonn.Services
                         CategorySub = Value(node, "KategoriSub"),
                         Unit = Value(node, "SatisBirimi"),
                         SourceUrl = Value(node, "UrunUrl"),
-                        ImageUrl = Value(node, "ResimUrl"),
+                        ImageUrl = imageUrl,
+                        ImageVersion = ShortHash(imageUrl),
                         Price = ParseDecimal(Value(node, "SatisFiyati")),
                         Currency = string.IsNullOrWhiteSpace(Value(node, "ParaBirimi")) ? "TL" : Value(node, "ParaBirimi"),
                         VatIncluded = string.Equals(Value(node, "KDVDahil"), "TRUE", StringComparison.OrdinalIgnoreCase),
@@ -264,6 +277,8 @@ namespace duzeypromosyonn.Services
                 .OrderBy(category => category.Name)
                 .ToList();
 
+            ApplyCategoryAliasCounts(categories, products);
+
             var prices = products.Select(product => product.Price).Where(price => price > 0).ToList();
 
             return new ProductCatalog
@@ -303,8 +318,41 @@ namespace duzeypromosyonn.Services
             }
         }
 
+        private static bool MatchesStockFilter(Product product, bool inStock, string color)
+        {
+            if (product == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(color))
+            {
+                var matchingOptions = product.Options
+                    .Where(option => string.Equals(option.Color, color, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                if (!matchingOptions.Any())
+                {
+                    return false;
+                }
+
+                return inStock
+                    ? matchingOptions.Any(option => option.StockQuantity > 0)
+                    : matchingOptions.All(option => option.StockQuantity <= 0);
+            }
+
+            var hasStock = product.TotalStock > 0 || product.Options.Any(option => option.StockQuantity > 0);
+            return inStock ? hasStock : !hasStock;
+        }
+
         private static bool MatchesCategory(Product product, int categoryId)
         {
+            var alias = FindCategoryAlias(categoryId);
+            if (alias != null)
+            {
+                return alias.Matches(product);
+            }
+
             if (categoryId == 22 || categoryId == 94)
             {
                 return product.CategoryId == 22
@@ -313,6 +361,91 @@ namespace duzeypromosyonn.Services
             }
 
             return product.CategoryId == categoryId || product.MainCategoryId == categoryId || product.SubCategoryId == categoryId;
+        }
+
+        private static void ApplyCategoryAliasCounts(IList<CategoryInfo> categories, IList<Product> products)
+        {
+            foreach (var alias in CategoryAliases)
+            {
+                var count = products.Count(product => alias.Matches(product));
+                var category = categories.FirstOrDefault(item => item.Id == alias.PrimaryCategoryId)
+                    ?? categories.FirstOrDefault(item => string.Equals(Normalize(item.Name), Normalize(alias.DisplayName), StringComparison.Ordinal));
+
+                if (category == null)
+                {
+                    categories.Add(new CategoryInfo
+                    {
+                        Id = alias.PrimaryCategoryId,
+                        Name = alias.DisplayName,
+                        Count = count,
+                        Slug = Slugify(alias.DisplayName)
+                    });
+                    continue;
+                }
+
+                category.Id = alias.PrimaryCategoryId;
+                category.Name = alias.DisplayName;
+                category.Count = count;
+                category.Slug = Slugify(alias.DisplayName);
+            }
+        }
+
+        private static CategoryInfo FindSelectedCategory(ProductCatalog catalog, int categoryId)
+        {
+            var selectedCategory = catalog.Categories.FirstOrDefault(category => category.Id == categoryId);
+            if (selectedCategory != null)
+            {
+                return selectedCategory;
+            }
+
+            var alias = FindCategoryAlias(categoryId);
+            if (alias == null)
+            {
+                return null;
+            }
+
+            return catalog.Categories.FirstOrDefault(category => category.Id == alias.PrimaryCategoryId)
+                ?? catalog.Categories.FirstOrDefault(category => string.Equals(Normalize(category.Name), Normalize(alias.DisplayName), StringComparison.Ordinal));
+        }
+
+        private static CategoryAliasRule FindCategoryAlias(int categoryId)
+        {
+            return CategoryAliases.FirstOrDefault(alias => alias.PublicCategoryIds.Contains(categoryId));
+        }
+
+        private static bool MatchesAwardCategoryProduct(Product product)
+        {
+            if (product == null)
+            {
+                return false;
+            }
+
+            if (MatchesAnyCategoryId(product, 22, 94))
+            {
+                return true;
+            }
+
+            var normalizedName = NormalizeSearchText(product.Name);
+            var isAwardNamedProduct = normalizedName.Contains("plaket")
+                || normalizedName.Contains("madalya")
+                || normalizedName.Contains("odul")
+                || normalizedName.Contains("isimlik");
+
+            if (!isAwardNamedProduct)
+            {
+                return false;
+            }
+
+            return product.CategoryId == 33
+                || product.SubCategoryId == 33
+                || (product.CategoryId == 3 && product.MainCategoryId == 3 && product.SubCategoryId == 0);
+        }
+
+        private static bool MatchesAnyCategoryId(Product product, params int[] categoryIds)
+        {
+            return categoryIds.Contains(product.CategoryId)
+                || categoryIds.Contains(product.MainCategoryId)
+                || categoryIds.Contains(product.SubCategoryId);
         }
 
         private static bool MatchesSearch(string value, string normalizedNeedle, IList<string> normalizedNeedleTokens)
@@ -431,6 +564,20 @@ namespace duzeypromosyonn.Services
             return text.ToLower(new CultureInfo("tr-TR"));
         }
 
+        private static string ShortHash(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return ImageVersionPrefix + "no-image";
+            }
+
+            using (var sha1 = SHA1.Create())
+            {
+                var bytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(value));
+                return ImageVersionPrefix + BitConverter.ToString(bytes).Replace("-", string.Empty).Substring(0, 12).ToLowerInvariant();
+            }
+        }
+
         private static string Value(XElement node, string name)
         {
             if (node == null)
@@ -467,6 +614,22 @@ namespace duzeypromosyonn.Services
             }
 
             return 0;
+        }
+
+        private sealed class CategoryAliasRule
+        {
+            public CategoryAliasRule(string displayName, int primaryCategoryId, int[] publicCategoryIds, Func<Product, bool> matches)
+            {
+                DisplayName = displayName;
+                PrimaryCategoryId = primaryCategoryId;
+                PublicCategoryIds = publicCategoryIds;
+                Matches = matches;
+            }
+
+            public string DisplayName { get; private set; }
+            public int PrimaryCategoryId { get; private set; }
+            public int[] PublicCategoryIds { get; private set; }
+            public Func<Product, bool> Matches { get; private set; }
         }
     }
 }

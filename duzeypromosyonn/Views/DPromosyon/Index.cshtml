@@ -100,7 +100,7 @@
             @for (var productIndex = 0; productIndex < Model.FeaturedProducts.Count; productIndex++)
             {
                 var product = Model.FeaturedProducts[productIndex];
-                @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 8 } })
+                @Html.Partial("_ProductCard", product, new ViewDataDictionary(ViewData) { { "EagerImage", productIndex < 4 } })
             }
         </div>
     </div>

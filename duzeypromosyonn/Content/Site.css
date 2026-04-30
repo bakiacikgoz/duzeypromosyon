@@ -777,7 +777,7 @@ a:hover {
 }
 
 .product-image::after {
-    content: "Görsel yükleniyor";
+    content: none;
     left: 50%;
     top: 50%;
     z-index: 1;
@@ -806,7 +806,7 @@ a:hover {
 }
 
 .product-image.is-error::after {
-    content: "Görsel yüklenemedi";
+    content: none;
     opacity: 1;
 }
 
@@ -830,6 +830,25 @@ a:hover {
 
 .product-image.is-error img {
     display: none;
+}
+
+.product-image::before,
+.product-image::after,
+.product-image.is-error::before,
+.product-image.is-error::after {
+    content: none;
+    display: none;
+    animation: none;
+}
+
+.product-image img,
+.product-image.is-loaded img,
+.product-image.is-error img {
+    display: block;
+    opacity: 1;
+    transform: none;
+    object-fit: contain;
+    background: #fff;
 }
 
 @keyframes product-image-skeleton {

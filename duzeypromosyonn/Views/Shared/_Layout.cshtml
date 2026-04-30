@@ -100,7 +100,7 @@
                                                     Title = "Kişisel Ürünler & Aksesuarlar",
                                                     Items = new[] {
                                                         new { Name = "VIP Setler", RouteName = "VIP Setler", Id = 83, AltKategori = "", Query = "" },
-                                                        new { Name = "Kristal ve Ödül Ürünleri", RouteName = "Kristal ve Ödül Ürünleri", Id = 22, AltKategori = "", Query = "" },
+                                                        new { Name = "Kristal ve Ödül Ürünleri", RouteName = "Kristal ve Ödül Ürünleri", Id = 77, AltKategori = "", Query = "" },
                                                         new { Name = "Set ve Hediye Kutuları", RouteName = "", Id = 0, AltKategori = "", Query = "Hediye Kutusu" },
                                                         new { Name = "Anahtarlık ve Rozetler", RouteName = "Anahtarlık ve Rozetler", Id = 18, AltKategori = "", Query = "" },
                                                         new { Name = "Kartvizitlikler", RouteName = "Kartvizitlikler", Id = 21, AltKategori = "", Query = "" },
@@ -370,50 +370,6 @@
                 document.addEventListener('DOMContentLoaded', showPromoInfoModal);
             } else {
                 showPromoInfoModal();
-            }
-        })();
-
-        (function () {
-            function updateProductImageState(image) {
-                var imageWrap = image.closest('.product-image');
-                if (!imageWrap) {
-                    return;
-                }
-
-                imageWrap.classList.remove('is-loading');
-
-                if (image.naturalWidth > 0) {
-                    imageWrap.classList.add('is-loaded');
-                    imageWrap.classList.remove('is-error');
-                } else {
-                    imageWrap.classList.add('is-error');
-                    imageWrap.classList.remove('is-loaded');
-                }
-            }
-
-            function bindProductImageStates() {
-                var images = document.querySelectorAll('.product-image img');
-
-                images.forEach(function (image) {
-                    if (image.complete) {
-                        updateProductImageState(image);
-                        return;
-                    }
-
-                    image.addEventListener('load', function () {
-                        updateProductImageState(image);
-                    }, { once: true });
-
-                    image.addEventListener('error', function () {
-                        updateProductImageState(image);
-                    }, { once: true });
-                });
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', bindProductImageStates);
-            } else {
-                bindProductImageStates();
             }
         })();
 

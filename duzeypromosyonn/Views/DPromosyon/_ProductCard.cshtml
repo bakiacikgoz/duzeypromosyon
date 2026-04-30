@@ -8,10 +8,12 @@
     var eagerImage = ViewData["EagerImage"] != null && Convert.ToBoolean(ViewData["EagerImage"]);
     var imageLoading = eagerImage ? "eager" : "lazy";
     var imageFetchPriority = eagerImage ? "high" : "auto";
+    var imageUrl = Url.RouteUrl("ProductImage", new { id = Model.Id, size = "card", v = Model.ImageVersion });
+    var fallbackUrl = Url.Content("~/Content/promosyon 2.2/img/kategori-8.jpg");
 }
 <article class="product-card">
-    <a class="product-image is-loading" href="@Url.RouteUrl("ProductDetails", new { title = ProductCatalogService.Slugify(Model.Name), id = Model.Id })">
-        <img src="@Model.ImageUrl" alt="@Model.Name" loading="@imageLoading" decoding="async" fetchpriority="@imageFetchPriority" />
+    <a class="product-image" href="@Url.RouteUrl("ProductDetails", new { title = ProductCatalogService.Slugify(Model.Name), id = Model.Id })">
+        <img src="@imageUrl" alt="@Model.Name" loading="@imageLoading" decoding="async" fetchpriority="@imageFetchPriority" width="600" height="600" onerror="this.onerror=null;this.src='@fallbackUrl';" />
     </a>
     <div class="product-body">
         <span class="product-category">@Model.CategoryMain</span>
